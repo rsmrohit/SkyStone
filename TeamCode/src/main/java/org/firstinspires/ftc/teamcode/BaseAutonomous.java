@@ -31,12 +31,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double     HEADING_THRESHOLD       = 1 ;
     static final double     P_DRIVE_COEFF           = 0.03;
 
-    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
-    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
-    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    private static final String VUFORIA_KEY = "AW96LTb/////AAABmaivtHzrd0gju5XtetpwppuGSyfDkXdWv7vyrqddGgyRP4m7UbrjLIwGi6O3SJkxFrMRLkdY527rsPR9bL89cstIHSsGMBN04yqphi/q9ce+NEG/qgv3P6e4MNoT3HzlMPUvQZjs4QPsRENnKZqHcru2L//SMz7PiX0juTXm695WBa5j2W3neYQ15sdtx1ZH58q7q5vdFsZGP7+D1PD5IUBOLn8noSkZF5gaGqbmJ3YxcYIYHHl6GsWZ0ff8X/VtGgh+pWkxeZlsyPhXzRqqTC1/NyYgm+umEI0gEAjwL5Mqi7bdDMrXIADKw1rSJNm+ivmrNtceobxkjTovWhqdoLQolQoAuTszTQUuorbzurqI";
-    private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+    private VuforiaLocalizer vuforia;
+    private static final String VUFORIA_KEY =
+            "AW96LTb/////AAABmaivtHzrd0gju5XtetpwppuGSyfDkXdWv7vyrqddGgyRP4m7UbrjLIwGi6O3SJkxFrMRLkdY527rsPR9bL89cstIHSsGMBN04yqphi/q9ce+NEG/qgv3P6e4MNoT3HzlMPUvQZjs4QPsRENnKZqHcru2L//SMz7PiX0juTXm695WBa5j2W3neYQ15sdtx1ZH58q7q5vdFsZGP7+D1PD5IUBOLn8noSkZF5gaGqbmJ3YxcYIYHHl6GsWZ0ff8X/VtGgh+pWkxeZlsyPhXzRqqTC1/NyYgm+umEI0gEAjwL5Mqi7bdDMrXIADKw1rSJNm+ivmrNtceobxkjTovWhqdoLQolQoAuTszTQUuorbzurqI";
+    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Stone";
+    private static final String LABEL_SECOND_ELEMENT = "Skystone";
 
 
     static final double  BRAKING_DISTANCE_COUNTS  = (40 * COUNTS_PER_CM);
@@ -767,18 +768,23 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     public void initializeObjectDetection(){
         initVuforia();
+
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();
         } else {
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
-        /** Activate Tensor Flow Object Detection. */
+
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
         if (tfod != null) {
             tfod.activate();
         }
     }
 
-    public String getMineralLocation(){
+   /* public String getMineralLocation(){
         String boi = "Centernotreallytho";
         runtime.reset();
 
@@ -823,6 +829,33 @@ public abstract class BaseAutonomous extends LinearOpMode {
             }
         }
         return boi;
+    }*/
+
+    public float findSkyStone(){
+        float skystonex = -1;
+        float stone1x = -1;
+        float stone2x = -1;
+        while(runtime.seconds()<4){
+            if (tfod != null){
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        if (recognition.getLabel().equals("Skystone")){
+                            skystonex = (recognition.getLeft()+recognition.getRight())/2.0f;
+                        }
+                    }
+
+
+                    telemetry.update();
+                }
+            }
+        }
+        return skystonex;
+
     }
 
     /**
@@ -840,7 +873,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
     }
 
     /**
@@ -850,8 +883,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minimumConfidence = 0.8;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
 }
