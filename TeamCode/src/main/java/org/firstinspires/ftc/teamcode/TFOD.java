@@ -121,11 +121,10 @@ public class TFOD extends LinearOpMode {
                         // step through the list of recognitions and display boundary info.
                         int i = 0;
                         for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
+                            if (recognition.getLabel().equals("Skystone")){
+                                telemetry.addData("center of the skystone",(recognition.getLeft()+recognition.getRight())/2.0f);
+                            }
+
                         }
                         telemetry.update();
                     }

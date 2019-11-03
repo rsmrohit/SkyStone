@@ -67,11 +67,11 @@ public class MecanumWheels {
     }
 
     public double getFrontRightPower() {
-        return -wheelPowers[FrontRight];
+        return wheelPowers[FrontRight];
     }
 
     public double getRearLeftPower() {
-        return -wheelPowers[RearLeft];
+        return wheelPowers[RearLeft];
     }
 
     public double getRearRightPower() {
