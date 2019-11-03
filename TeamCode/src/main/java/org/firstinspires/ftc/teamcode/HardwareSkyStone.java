@@ -25,14 +25,14 @@ public class HardwareSkyStone  {
     public DcMotor backRight = null;
 
 
-    public DcMotor  raiser = null;
 
-    public DcMotor hanger = null;
+
+
 
     public CRServo leftclaw = null;
     public CRServo rightclaw = null;
 
-    public DcMotor slider = null;
+
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
 
@@ -89,17 +89,7 @@ public class HardwareSkyStone  {
             realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
             realgyro2.calibrate();
 
-            //Liner Slide extend/contract motors
 
-            slider = hwMap.get(DcMotor.class, "slider");
-
-
-            // Sliders arm lowering/raising motoros
-            raiser = hwMap.get(DcMotor.class, "raiser");
-            hanger = hwMap.get(DcMotor.class, "hanger");
-
-
-            //bucket dumping motor
 
 
 
@@ -115,10 +105,7 @@ public class HardwareSkyStone  {
         spinner2.setDirection(DcMotor.Direction.FORWARD);
 
         if (!test) {
-            raiser.setDirection(DcMotor.Direction.REVERSE);
-            hanger.setDirection(DcMotor.Direction.REVERSE);
 
-            slider.setDirection(DcMotor.Direction.REVERSE);
 
         }
 
@@ -138,10 +125,7 @@ public class HardwareSkyStone  {
 
         if (!test) {
             realgyro.resetZAxisIntegrator();
-            raiser.setPower(0);
-            hanger.setPower(0);
 
-            slider.setPower(0);
 
 
         }
@@ -158,9 +142,7 @@ public class HardwareSkyStone  {
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if (!test) {
-                raiser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                hanger.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
             }
         }
@@ -175,10 +157,7 @@ public class HardwareSkyStone  {
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if (!test) {
-                raiser.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                hanger.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             }
 
@@ -190,10 +169,7 @@ public class HardwareSkyStone  {
             backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             if (!test) {
-                raiser.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                hanger.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             }
 

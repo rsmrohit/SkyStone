@@ -47,23 +47,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     private TFObjectDetector tfod;
 
-
+    public VuforiaTrackables haddi;
+    public List<VuforiaTrackable> buddi;
 
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
+
     private static final String VUFORIA_KEY =
             "AW96LTb/////AAABmaivtHzrd0gju5XtetpwppuGSyfDkXdWv7vyrqddGgyRP4m7UbrjLIwGi6O3SJkxFrMRLkdY527rsPR9bL89cstIHSsGMBN04yqphi/q9ce+NEG/qgv3P6e4MNoT3HzlMPUvQZjs4QPsRENnKZqHcru2L//SMz7PiX0juTXm695WBa5j2W3neYQ15sdtx1ZH58q7q5vdFsZGP7+D1PD5IUBOLn8noSkZF5gaGqbmJ3YxcYIYHHl6GsWZ0ff8X/VtGgh+pWkxeZlsyPhXzRqqTC1/NyYgm+umEI0gEAjwL5Mqi7bdDMrXIADKw1rSJNm+ivmrNtceobxkjTovWhqdoLQolQoAuTszTQUuorbzurqI";
 
@@ -98,16 +88,14 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double  BRAKING_DISTANCE_COUNTS  = (40 * COUNTS_PER_CM);
     static final double  ACCELERATING_DISTANCE_COUNTS  = (20 * COUNTS_PER_CM);
 
-    boolean rackup = false;
-    boolean dumbdriving = false;
-    int remainingdistance = 10000;
 
-    // initializes hardware; calibrates gyro
+
+    // initializes hardware  and vuforia; calibrates gyro
     public void inithardware(boolean test){
 
         robot = new HardwareSkyStone(test);
         robot.init(hardwareMap);
-//        initializeObjectDetection();
+        initVuforia();
         robot.setMode("encoders lmao");
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
@@ -478,150 +466,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
-    // drive while pulling in hanger arm
-    public void dumbencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y) {
-        int     newFrontLeftTarget;
-        int     newFrontRightTarget;
-        int     newBackLeftTarget;
-        int     newBackRightTarget;
-        int     frontLeftSign;
-        int     frontRightSign;
-        int     backLeftSign;
-        int     backRightSign;
-        MecanumWheels wheels = new MecanumWheels();
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-            wheels.UpdateInput(move_x, move_y, 0);
-
-            frontLeftSign = (int) (Math.abs(wheels.getFrontLeftPower())/wheels.getFrontLeftPower());
-            frontRightSign = (int) (Math.abs(wheels.getFrontRightPower())/wheels.getFrontRightPower());
-            backLeftSign = (int) (Math.abs(wheels.getRearLeftPower()) /wheels.getRearLeftPower());
-            backRightSign = (int) (Math.abs(wheels.getRearRightPower())/wheels.getRearRightPower());
-
-            telemetry.addData("fl",frontLeftSign);
-            telemetry.addData("fr",frontRightSign);
-            telemetry.addData("bl",backLeftSign);
-            telemetry.addData("br",backRightSign);
-            telemetry.update();
-
-
-            // Determine new target position, and pass to motor controller
-            newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontLeftSign);
-            newBackLeftTarget = robot.backLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backLeftSign);
-
-            newFrontRightTarget = robot.frontRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontRightSign);
-            newBackRightTarget = robot.backRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backRightSign);
-
-
-            robot.frontLeft.setTargetPosition(newFrontLeftTarget);
-            robot.frontRight.setTargetPosition(newFrontRightTarget);
-            robot.backLeft.setTargetPosition(newBackLeftTarget);
-            robot.backRight.setTargetPosition(newBackRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            telemetry.clear();
-            telemetry.addData("move_x:",move_x);
-            telemetry.addData("move_y:",move_y);
-            telemetry.update();
-
-
-
-
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed   ));
-            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed ));
-            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed    ));
-            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed    ));
-
-            dumbdriving = true;
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            if (rackup){
-                hangEncoder();
-            }
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
-                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy() )) {
-
-                telemetry.addData("running","yes");
-                telemetry.update();
-
-            }
-
-            dumbdriving = false;
-            // Stop all motion;
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
-            robot.backRight.setPower(0);
-            robot.backLeft.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-
-        }
-    }
-
-    // get off hanger using encoder
-    // direction should either be -1 or +1
-    // +1 means you're dropping
-    // -1 means you're hanging
-    public void dropEncoder(int direction){
-        int newTarget;
-
-        newTarget = robot.hanger.getCurrentPosition() + (13000 * direction);
-        robot.hanger.setTargetPosition(newTarget);
-        robot.hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.hanger.setPower(1);
-        while (robot.hanger.isBusy()){
-            telemetry.addData("haddi","buddi");
-            telemetry.update();
-        }
-        robot.hanger.setPower(0);
-        robot.hanger.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rackup = true;
-    }
-
-    // get on hanger using encoder
-    public void hangEncoder(){
-        int newTarget;
-
-        newTarget = robot.hanger.getCurrentPosition() - remainingdistance;
-        robot.hanger.setTargetPosition(newTarget);
-        robot.hanger.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.hanger.setPower(1);
-        while (robot.hanger.isBusy() && robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()){
-            telemetry.addData("haddi","buddi");
-            telemetry.update();
-        }
-        robot.hanger.setPower(0);
-        robot.hanger.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if (robot.hanger.getCurrentPosition() > newTarget){
-            remainingdistance = robot.hanger.getCurrentPosition() - newTarget;
-        }else{
-            rackup = false;
-            remainingdistance = 0;
-        }
-        telemetry.addData("remaining distance",remainingdistance);
-        telemetry.update();
-    }
-
     // NOT USED; uses encoders to drive - no gyro - tank drive
     public void encoderDrive(double speed, double leftCm, double rightCm, double timeoutS) {
         int newLeftTarget;
@@ -747,32 +591,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
 
-
-    // makes sure lift power doesn't run on encoder
-    public void setLiftPower(double power){
-        robot.raiser.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        robot.raiser.setPower(power);
-    }
-
-    // makes sure slide power doesn't run on encoder
-    public void setSlidePower(double power){
-
-        robot.slider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        robot.slider.setPower(power);
-
-    }
-
-    // NOT USED; stops all motors
-    public void stopAllMotors() {
-        robot.frontRight.setPower(0);
-        robot.frontLeft.setPower(0);
-        robot.raiser.setPower(0);
-
-        robot.slider.setPower(0);
-    }
-
     public void succ(long time) {
         robot.spinner.setPower(-1);
         robot.spinner2.setPower(-1);
@@ -809,11 +627,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
 
-
-
-
-    public void vuforiaJoint(){
-        runtime.reset();
+    public void initVuforia(){
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -975,6 +789,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
+        haddi = targetsSkyStone;
+        buddi = allTrackables;
+    }
+
+
+    public void vuforiaJoint(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
+        runtime.reset();
 
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.

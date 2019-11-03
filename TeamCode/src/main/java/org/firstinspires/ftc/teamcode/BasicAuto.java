@@ -7,9 +7,9 @@ public class BasicAuto extends BaseAutonomous {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        inithardware(true);
         waitForStart();
-        vuforiaJoint();
+        vuforiaJoint(haddi, buddi);
 
     }
 
