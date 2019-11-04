@@ -90,7 +90,7 @@ public class SkyStoneTeleop extends OpMode{
 
 
     /* Declare OpMode members. */
-    HardwareSkyStone robot       = new HardwareSkyStone(true); // use the class created to define a RoverRuckus's hardware
+    HardwareSkyStone robot       = new HardwareSkyStone(false); // use the class created to define a RoverRuckus's hardware
 
 
     /*

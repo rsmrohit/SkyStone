@@ -34,9 +34,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     // define and initialize variables
 
-    static final double     COUNTS_PER_MOTOR_REV    = 2240 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 0.5 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_CM       = 9.0 ;     // This measurement is more exact than inches
+    static final double     COUNTS_PER_MOTOR_REV    = 767.2 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_CM       = 10.0 ;     // This measurement is more exact than inches
     static final double     COUNTS_PER_CM         = ((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI));
     static final double     DRIVE_SPEED             = 0.9;
     static final double     TURBO_SPEED             = 0.7;
@@ -381,16 +381,12 @@ public abstract class BaseAutonomous extends LinearOpMode {
         if (opModeIsActive()) {
             wheels.UpdateInput(move_x, move_y, 0);
 
+
             frontLeftSign = (int) (Math.abs(wheels.getFrontLeftPower())/wheels.getFrontLeftPower());
             frontRightSign = (int) (Math.abs(wheels.getFrontRightPower())/wheels.getFrontRightPower());
             backLeftSign = (int) (Math.abs(wheels.getRearLeftPower()) /wheels.getRearLeftPower());
             backRightSign = (int) (Math.abs(wheels.getRearRightPower())/wheels.getRearRightPower());
 
-            telemetry.addData("fl",frontLeftSign);
-            telemetry.addData("fr",frontRightSign);
-            telemetry.addData("bl",backLeftSign);
-            telemetry.addData("br",backRightSign);
-            telemetry.update();
 
 
             // Determine new target position, and pass to motor controller
@@ -413,9 +409,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             telemetry.clear();
-            telemetry.addData("move_x:",move_x);
-            telemetry.addData("move_y:",move_y);
-            telemetry.update();
+
 
 
 
@@ -423,10 +417,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed   ));
-            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed ));
-            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed    ));
-            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed    ));
+            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed));
+            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed));
+            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed));
+            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed));
 
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -465,6 +459,62 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         }
     }
+
+    // simple directional drive function for a mecanum drive train
+    public void testdrive(double speed, double distance, DcMotor input ) {
+
+        int newTarget;
+
+        MecanumWheels wheels = new MecanumWheels();
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            wheels.UpdateInput(0, 1, 0);
+
+            // Determine new target position, and pass to motor controller
+
+            newTarget = input.getCurrentPosition() + (int)(distance * COUNTS_PER_CM);
+
+            input.setTargetPosition(newTarget);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            input.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            input.setPower(wheels.getRearRightPower()*speed);
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive()  && (input.isBusy())) {
+
+                // Display it for the driver.
+                //         telemetry.addData("Path1",  "Running to %7d :%7d", newFrontLeftTarget,  newFrontRightTarget);
+                //       telemetry.addData("Path2",  "Running at %7d :%7d",
+
+                telemetry.addData("BackRightPower",input.getPower());
+                telemetry.addData("current position",input.getCurrentPosition());
+
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            input.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
+
 
     // NOT USED; uses encoders to drive - no gyro - tank drive
     public void encoderDrive(double speed, double leftCm, double rightCm, double timeoutS) {
@@ -624,7 +674,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.frontLeft.setPower(0);
         robot.backLeft.setPower(0);
     }
-
 
 
     public void initVuforia(){
@@ -794,7 +843,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
 
-    public void vuforiaJoint(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
+    public String vuforiaJoint(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
         runtime.reset();
 
         // WARNING:
@@ -810,22 +859,25 @@ public abstract class BaseAutonomous extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
-        while (runtime.seconds()<5){
+        while (runtime.seconds()<5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
 
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
+                    if (trackable.getName().equals("Stone Target")){
+                        targetVisible = true;
+
+                        // getUpdatedRobotLocation() will return null if no new information is available since
+                        // the last time that call was made, or if the trackable is not currently visible.
+                        OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                        if (robotLocationTransform != null) {
+                            lastLocation = robotLocationTransform;
+                        }
+                        break;
                     }
-                    break;
-                }
+                    }
+
             }
 
             // Provide feedback as to where the robot is located (if we know).
@@ -834,10 +886,12 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                if (translation.get(1)/mmPerInch < -0.45){
+                    return "Left";
+                } else if (translation.get(1)/mmPerInch < 9){
+                    return "Center" ;
+                }
 
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {
                 telemetry.addData("Visible Target", "none");
@@ -846,6 +900,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
 
         targetsSkyStone.deactivate();
+        return "Right";
     }
 
 

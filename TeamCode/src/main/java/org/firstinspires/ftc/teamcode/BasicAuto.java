@@ -9,7 +9,10 @@ public class BasicAuto extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         inithardware(true);
         waitForStart();
-        vuforiaJoint(haddi, buddi);
+        String location = vuforiaJoint(haddi, buddi);
+        telemetry.addData("location",location);
+        telemetry.update();
+        sleep(1000);
 
     }
 

@@ -26,9 +26,6 @@ public class HardwareSkyStone  {
 
 
 
-
-
-
     public CRServo leftclaw = null;
     public CRServo rightclaw = null;
 
@@ -36,10 +33,7 @@ public class HardwareSkyStone  {
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
 
-    private boolean test = true;
-
-
-
+    private boolean test;
 
 
     public ModernRoboticsI2cGyro realgyro;
@@ -47,7 +41,7 @@ public class HardwareSkyStone  {
 
 
     public static final String TeleOpRunMode = "no encoders";
-    public static final double ARM_UP_POSITION = 0.7;
+
 
 
     /* local OpMode members. */
@@ -86,8 +80,8 @@ public class HardwareSkyStone  {
             realgyro.calibrate();
 
 
-            realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
-            realgyro2.calibrate();
+//            realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
+//            realgyro2.calibrate();
 
 
 

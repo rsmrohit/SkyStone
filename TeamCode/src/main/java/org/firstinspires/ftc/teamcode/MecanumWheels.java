@@ -20,7 +20,7 @@ public class MecanumWheels {
     public MecanumWheels() {
         move_x =0;
         move_y =0;
-        turn =0;
+        turn = 0;
 
         for (int i = 0; i < wheelPowers.length; i++) {
             wheelPowers[i] = 0.0;
@@ -75,7 +75,7 @@ public class MecanumWheels {
     }
 
     public double getRearRightPower() {
-        return -(wheelPowers[RearRight]);
+        return wheelPowers[RearRight];
     }
 
 
