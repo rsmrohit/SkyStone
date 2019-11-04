@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "stinky",group = "SkyStone")
+@Autonomous(name = "redDepot",group = "SkyStone")
 public class moveToVuforia extends BaseAutonomous {
 
     @Override
@@ -23,6 +23,7 @@ public class moveToVuforia extends BaseAutonomous {
         String location = vuforiaJoint(haddi,buddi);
         telemetry.addData("location",location);
         if (location.equals("Center")){
+            encoderMecanumDrive(0.4,5,2,1,0);
             robot.spinner.setPower(-1.0 );
             robot.spinner2.setPower(-1.0 );
             encoderMecanumDrive(0.4,100,6,0,1);
