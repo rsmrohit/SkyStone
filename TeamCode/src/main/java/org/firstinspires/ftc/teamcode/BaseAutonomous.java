@@ -641,10 +641,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
 
-    public void succ(long time) {
+    public void succ() {
         robot.spinner.setPower(-1);
         robot.spinner2.setPower(-1);
-        sleep(time);
+        sleep(1000);
         robot.spinner.setPower(0);
         robot.spinner2.setPower(0);
 
@@ -657,6 +657,34 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.spinner.setPower(0);
         robot.spinner2.setPower(0);
 
+    }
+
+    public void grab(){
+        robot.rightclaw.setPower(-1);
+        robot.leftclaw.setPower(-1);
+        sleep(570);
+        robot.rightclaw.setPower(0);
+        robot.leftclaw.setPower(0);
+        sleep(150);
+    }
+
+    public void smallgrab(){
+        encoderMecanumDrive(0.4,7,1,0,-1);
+        robot.rightclaw.setPower(-1);
+        robot.rightclaw.setPower(-1);
+        sleep(100);
+        robot.rightclaw.setPower(0);
+        robot.leftclaw.setPower(0);
+        sleep(150);
+    }
+
+    public void release(){
+        robot.rightclaw.setPower(1);
+        robot.leftclaw.setPower(1);
+        sleep(450);
+        robot.rightclaw.setPower(0);
+        robot.leftclaw.setPower(0);
+        sleep(100);
     }
 
     public void leftTurn(){
@@ -673,6 +701,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
         sleep(400);
         robot.frontLeft.setPower(0);
         robot.backLeft.setPower(0);
+    }
+
+    public void correctGyroTurn(double speed, double angle){
+        angle *= -1;
+        gyroTurn(speed, angle);
     }
 
 

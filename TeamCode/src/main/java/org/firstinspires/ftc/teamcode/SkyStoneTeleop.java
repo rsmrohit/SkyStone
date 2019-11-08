@@ -158,10 +158,10 @@ public class SkyStoneTeleop extends OpMode{
 
         if (gamepad2.left_bumper){
             telemetry.addData("bruh","bruh");
-            robot.rightclaw.setPower(1.0);
+            robot.rightclaw.setPower(-1.0);
             robot.leftclaw.setPower(-1.0);
         }else if(gamepad2.right_bumper){
-            robot.rightclaw.setPower(-1.0);
+            robot.rightclaw.setPower(1.0);
             robot.leftclaw.setPower(1.0);
         } else{
             robot.rightclaw.setPower(0);

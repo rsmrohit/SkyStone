@@ -63,7 +63,7 @@ public class MecanumWheels {
 
 
     public double getFrontLeftPower() {
-        return (wheelPowers[FrontLeft]);
+        return wheelPowers[FrontLeft];
     }
 
     public double getFrontRightPower() {

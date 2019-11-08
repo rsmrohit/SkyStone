@@ -97,6 +97,7 @@ public class HardwareSkyStone  {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         spinner.setDirection(DcMotor.Direction.REVERSE);
         spinner2.setDirection(DcMotor.Direction.FORWARD);
+        rightclaw.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (!test) {
 
