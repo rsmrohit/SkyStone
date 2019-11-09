@@ -29,14 +29,16 @@ public class MecanumWheels {
 
     private void CalclulatePower() {
 
+
         double r = Math.hypot(move_x, move_y);
         double robotAngle = Math.atan2(move_y, move_x) - Math.PI / 4;
         double rightX = turn;
 
-        wheelPowers[FrontLeft] = r * Math.cos(robotAngle) - rightX;
-        wheelPowers[FrontRight] = r * Math.sin(robotAngle) + rightX;
-        wheelPowers[RearLeft] = r * Math.sin(robotAngle) - rightX;
-        wheelPowers[RearRight] = r * Math.cos(robotAngle) + rightX;
+
+          wheelPowers[FrontLeft] = r * Math.cos(robotAngle) - rightX;
+          wheelPowers[FrontRight] = r * Math.sin(robotAngle) + rightX;
+          wheelPowers[RearLeft] = r * Math.sin(robotAngle) - rightX;
+          wheelPowers[RearRight] = r * Math.cos(robotAngle) + rightX;
 
         // Adjust maximum power from -1.0 to 1.0
         double absMax = 0.0;
@@ -53,10 +55,10 @@ public class MecanumWheels {
         }
     }
 
-    public void UpdateInput(double move_x, double move_y, double turn) {
-        this.move_x = move_x;
-        this.move_y = move_y;
-        this.turn = turn;
+    public void UpdateInput(double a, double b, double c) {
+        this.move_x = a;
+        this.move_y = b;
+        this.turn = c;
         CalclulatePower();
     }
 

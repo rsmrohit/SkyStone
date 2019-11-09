@@ -9,7 +9,7 @@ public class RedDepotAuto extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
 
         //Initialize the hardware using BaseAutonomous Function
-        inithardware(true);
+        inithardware(false);
 
         telemetry.addData("program","initing");
         telemetry.update();
@@ -18,26 +18,43 @@ public class RedDepotAuto extends BaseAutonomous {
         //Wait for the start button to be pressed
         waitForStart();
 
-//        encoderMecanumDrive(DRIVE_SPEED,5.5,1,-1,0);
-//        encoderMecanumDrive(DRIVE_SPEED,5.3,1,0,1);
-//        sleep(500);
-//        rightTurn();
-//        encoderMecanumDrive(DRIVE_SPEED,1.2,1,0,1);
-//        succ();
-//        encoderMecanumDrive(DRIVE_SPEED,1,1,0,-1);
-//        leftTurn();
-//        sleep(200);
-//        encoderMecanumDrive(DRIVE_SPEED,20,2,-1,0);
-//        encoderMecanumDrive(DRIVE_SPEED,6.5,1,0,1);
-//        spit();
 
-        encoderMecanumDrive(DRIVE_SPEED,40,2,0,1);
-        encoderMecanumDrive(DRIVE_SPEED,30,2,1,0);
-        String location = vuforiaJoint(haddi, buddi);
+        encoderMecanumDrive(DRIVE_SPEED,60,4,-1,0);
+        encoderMecanumDrive(DRIVE_SPEED,50,4,0,1);
+        String location = vuforiaJoint(haddi,buddi);
         telemetry.addData("location",location);
         telemetry.update();
-        sleep(1000);
 
+        if (location.equals("Right")){
+            gyroTurn(TURN_SPEED,45);
+            //encoderMecanumDrive(DRIVE_SPEED,8,2,0.93969,0.34202);
+            succ();
+            encoderMecanumDrive(0.2,60,10,-1,1);
+            succstop();
+            gyroTurn(0.4,90);
+            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,220,10,-1,0);
+
+        } else if (location.equals("Left")){
+            gyroTurn(TURN_SPEED,120);
+            encoderMecanumDrive(DRIVE_SPEED,6,1,0.8660254,-0.5);
+
+            succ();
+
+            encoderMecanumDrive(0.2,60,10,0.5,0.8660254);
+
+            succstop();
+            gyroTurn(0.4,90);
+            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,220,10,-1,0);
+        }else if (location.equals("Center")){
+            gyroTurn(TURN_SPEED,90);
+            succ();
+            encoderMecanumDrive(0.2,60,10,0,1);
+            succstop();
+            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,220,10,-1,0);
+        }
 
 
 

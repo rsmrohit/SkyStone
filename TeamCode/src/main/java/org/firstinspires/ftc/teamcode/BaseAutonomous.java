@@ -30,7 +30,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     HardwareSkyStone robot = null;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime runtime = new ElapsedTime();
 
     // define and initialize variables
 
@@ -40,7 +40,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double     COUNTS_PER_CM         = ((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI));
     static final double     DRIVE_SPEED             = 0.9;
     static final double     TURBO_SPEED             = 0.7;
-    static final double     TURN_SPEED              = 0.2;
+    static final double     TURN_SPEED              = 0.3;
     static final double     P_TURN_COEFF            = 0.03;
     static final double     HEADING_THRESHOLD       = 1 ;
     static final double     P_DRIVE_COEFF           = 0.03;
@@ -121,124 +121,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         return sum;
     }
 
-    // NOT USED (only for tank drive); uses gyro to move robot at a specific angle and distance (cm)
-    public void gyroDrive ( double speed, double distance, double angle) {
-
-        int     newLeftTarget;
-        int     newRightTarget;
-        int     moveCounts;
-        double  targetAvg;
-        double  currentAvg;
-        double  initialAvg;
-        double  remainingCounts;
-        double  countsTraveled;
-        double  factor;
-        double  deaccelerate;
-        double  deaccelerate2;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            factor = 1;
-            moveCounts = (int)(distance * COUNTS_PER_CM);
-            newLeftTarget = robot.frontLeft.getCurrentPosition() + moveCounts;
-            newRightTarget = robot.frontRight.getCurrentPosition() + moveCounts;
-            targetAvg = (newLeftTarget + newRightTarget)/2;
-            currentAvg = (robot.frontLeft.getCurrentPosition()+robot.frontRight.getCurrentPosition())/2 ;
-            initialAvg = currentAvg;
-
-            // Set Target and Turn On RUN_TO_POSITION
-            robot.frontLeft.setTargetPosition(newLeftTarget);
-            robot.frontRight.setTargetPosition(newRightTarget);
-
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robot.frontLeft.setPower(speed);
-            robot.frontRight.setPower(speed);
-
-
-            // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
-                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy())) {
-
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-                currentAvg = (robot.frontLeft.getCurrentPosition()+robot.frontRight.getCurrentPosition())/2 ;
-                remainingCounts = targetAvg - currentAvg;
-                countsTraveled = currentAvg - initialAvg;
-
-                if (countsTraveled < ACCELERATING_DISTANCE_COUNTS) {
-                    factor = (countsTraveled * (1.0/ACCELERATING_DISTANCE_COUNTS)) + 0.1;
-                    leftSpeed *= factor;
-                    rightSpeed *= factor;
-                    telemetry.addData("factor happened",leftSpeed);
-                    telemetry.update();
-                }
-
-                if (remainingCounts <= BRAKING_DISTANCE_COUNTS) {
-                    factor = remainingCounts * (1.0/BRAKING_DISTANCE_COUNTS);
-                    leftSpeed *= factor;
-                    rightSpeed *= factor;
-                    telemetry.addData("factor happened",leftSpeed);
-                    telemetry.update();
-                }
-
-                robot.frontLeft.setPower(leftSpeed);
-                robot.frontRight.setPower(rightSpeed);
-
-                // Display drive status for the driver.
-//                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-//                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
-//                telemetry.addData("Actual",  "%7d:%7d",      robot.frontLeft.getCurrentPosition(),
-//                        robot.frontRight.getCurrentPosition());
-//                telemetry.addData("Deaccelerate",  "%.2f"/*,      deaccelerate*/);
-//                telemetry.addData("current_heading",getAverageGyro());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.addData("TargetAvg",targetAvg);
-                telemetry.addData("CurrentAvg",currentAvg);
-                telemetry.addData("factor",factor);
-
-
-
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
-
-
-
-            // Turn off RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
 
     // Only for mecanum drive; uses gyro to move robot at a specific angle and distance (cm)
     public void gyroMecanumDrive ( double speed, double distance, double angle) {
@@ -365,6 +247,53 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
+
+
+    // checks to make sure that all motors which should be running are running
+    public boolean areMotorsRunning(MecanumWheels wheels){
+        for (int i = 0; i < wheels.wheelPowers.length;i++){
+            if (wheels.wheelPowers[i]!=0){
+                switch (i){
+                    case 0:
+                        if (!robot.frontLeft.isBusy()) {
+                            telemetry.addData("front left motor", "done");
+                            telemetry.update();
+
+                            return false;
+                        }
+                        break;
+                    case 1:
+                        if (!robot.frontRight.isBusy()) {
+                            telemetry.addData("front right power",  wheels.wheelPowers[i]);
+                            telemetry.addData("front right motor", "done");
+                            telemetry.update();
+
+                            return false;
+                        }
+                        break;
+                    case 2:
+                        if (!robot.backLeft.isBusy()){
+                            telemetry.addData("back left motor", "done");
+                            telemetry.update();
+
+                            return false;
+                        }
+                        break;
+                    case 3:
+                        if (!robot.backRight.isBusy()) {
+                            telemetry.addData("back right motor", "done");
+                            telemetry.update();
+
+                            return false;
+                        }
+                        break;
+                }
+            }
+        }
+        return true;
+    }
+
+
     // simple directional drive function for a mecanum drive train
     public void encoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y) {
         int     newFrontLeftTarget;
@@ -392,27 +321,23 @@ public abstract class BaseAutonomous extends LinearOpMode {
             // Determine new target position, and pass to motor controller
             newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontLeftSign);
             newBackLeftTarget = robot.backLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backLeftSign);
-
             newFrontRightTarget = robot.frontRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontRightSign);
             newBackRightTarget = robot.backRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backRightSign);
 
 
+            //Set target position
             robot.frontLeft.setTargetPosition(newFrontLeftTarget);
             robot.frontRight.setTargetPosition(newFrontRightTarget);
             robot.backLeft.setTargetPosition(newBackLeftTarget);
             robot.backRight.setTargetPosition(newBackRightTarget);
+
+
 
             // Turn On RUN_TO_POSITION
             robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            telemetry.clear();
-
-
-
-
 
 
             // reset the timeout time and start motion.
@@ -423,25 +348,17 @@ public abstract class BaseAutonomous extends LinearOpMode {
             robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed));
 
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
-                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy() )) {
 
-                // Display it for the driver.
-                //         telemetry.addData("Path1",  "Running to %7d :%7d", newFrontLeftTarget,  newFrontRightTarget);
-                //       telemetry.addData("Path2",  "Running at %7d :%7d",
-                //             robot.frontLeft.getCurrentPosition(),
-                //           robot.frontRight.getCurrentPosition());
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels)) {
 
                 telemetry.addData("FrontLeftPower",robot.frontLeft.getPower());
                 telemetry.addData("FrontRightPower",robot.frontRight.getPower());
                 telemetry.addData("BackRightPower",robot.backRight.getPower());
                 telemetry.addData("BackLeftPower",robot.backLeft.getPower());
+//                telemetry.addData("front left power",  wheels.wheelPowers[0]);
+//                telemetry.addData("back left power",  wheels.wheelPowers[2]);
+//                telemetry.addData("back right power",  wheels.wheelPowers[3]);
+//                telemetry.addData("front right power",  wheels.wheelPowers[1]);
                 telemetry.update();
             }
 
@@ -644,10 +561,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
     public void succ() {
         robot.spinner.setPower(-1);
         robot.spinner2.setPower(-1);
-        sleep(1000);
+
+    }
+    public void succstop(){
         robot.spinner.setPower(0);
         robot.spinner2.setPower(0);
-
     }
 
     public void spit() {
@@ -892,7 +810,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
-        while (runtime.seconds()<5 && !isStopRequested()){
+        while (runtime.seconds()<1.5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -919,9 +837,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -0.45){
+                if (translation.get(1)/mmPerInch < 0.45){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 9){
+                } else if (translation.get(1)/mmPerInch < 7.8){
                     return "Center" ;
                 }
 
