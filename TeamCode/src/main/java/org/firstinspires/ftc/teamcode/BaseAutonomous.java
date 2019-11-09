@@ -662,7 +662,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     public void grab(){
         robot.rightclaw.setPower(-1);
         robot.leftclaw.setPower(-1);
-        sleep(570);
+        sleep(350);
         robot.rightclaw.setPower(0);
         robot.leftclaw.setPower(0);
         sleep(150);
@@ -681,7 +681,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     public void release(){
         robot.rightclaw.setPower(1);
         robot.leftclaw.setPower(1);
-        sleep(450);
+        sleep(350);
         robot.rightclaw.setPower(0);
         robot.leftclaw.setPower(0);
         sleep(100);

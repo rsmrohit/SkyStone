@@ -9,14 +9,14 @@ public class BasicAuto extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         inithardware(true);
         waitForStart();
-//        String location = vuforiaJoint(haddi, buddi);
-//        telemetry.addData("location",location);
-//        telemetry.update();
-//        sleep(1000);
-        grab();
-        release();
-        grab();
-        release();
+
+
+
+        testdrive(0.5,30,robot.frontLeft);
+        testdrive(0.5,30,robot.frontRight);
+        testdrive(0.5,30,robot.backRight);
+        testdrive(0.5,30,robot.backLeft);
+
 
 
     }
