@@ -854,6 +854,57 @@ public abstract class BaseAutonomous extends LinearOpMode {
         return "Right";
     }
 
+    public String vuforiaJointo(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
+        runtime.reset();
+
+
+        targetsSkyStone.activate();
+        while (runtime.seconds()<5 && !isStopRequested()){
+            // check all the trackable targets to see which one (if any) is visible.
+            targetVisible = false;
+            for (VuforiaTrackable trackable : allTrackables) {
+                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+
+                    if (trackable.getName().equals("Stone Target")){
+                        targetVisible = true;
+
+                        // getUpdatedRobotLocation() will return null if no new information is available since
+                        // the last time that call was made, or if the trackable is not currently visible.
+                        OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                        if (robotLocationTransform != null) {
+                            lastLocation = robotLocationTransform;
+                        }
+                        break;
+                    }
+                }
+
+            }
+
+            //center -0.2
+            //left -2.8
+
+
+            // Provide feedback as to where the robot is located (if we know).
+            if (targetVisible) {
+                // express position (translation) of robot in inches.
+                VectorF translation = lastLocation.getTranslation();
+                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                if (translation.get(1)/mmPerInch < -1.5){
+                    return "Left";
+                } else if (translation.get(1)/mmPerInch < 2.2){
+                    return "Center" ;
+                }
+            }
+            else {
+                telemetry.addData("Visible Target", "none");
+            }
+            telemetry.update();
+        }
+
+        targetsSkyStone.deactivate();
+        return "Right";
+    }
 
 
 }
