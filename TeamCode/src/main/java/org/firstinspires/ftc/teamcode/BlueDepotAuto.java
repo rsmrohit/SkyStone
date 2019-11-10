@@ -37,8 +37,8 @@ public class BlueDepotAuto extends BaseAutonomous {
             gyroTurn(0.4,90);
             encoderMecanumDrive(1.0,50,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
-
-
+            spit();
+            encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);
 
 
         } else if (location.equals("Left")){
@@ -53,9 +53,8 @@ public class BlueDepotAuto extends BaseAutonomous {
             gyroTurn(0.4,90);
             encoderMecanumDrive(1.0,50,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
-
-
-
+            spit();
+            encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);
 
 
         }else if (location.equals("Center")){
@@ -66,6 +65,8 @@ public class BlueDepotAuto extends BaseAutonomous {
             succstop();
             encoderMecanumDrive(1.0,50,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
+            spit();
+            encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);
         }
 
 

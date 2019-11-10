@@ -170,25 +170,25 @@ public class SkyStoneTeleop extends OpMode{
 
 
         // turn on/off spinner
-        if (gamepad1.x && !pastStateX) {
+        if (gamepad2.x && !pastStateX) {
             spinX = !spinX;
             if (spinX) {
                 spinY = false;
             }
         }
-        pastStateX = gamepad1.x;
+        pastStateX = gamepad2.x;
 
         // turn on/off spinner in opposite direction
-        if (gamepad1.y && !pastStateY) {
+        if (gamepad2.y && !pastStateY) {
             spinY = !spinY;
             if (spinY) {
                 spinX = false;
             }
         }
-        pastStateY = gamepad1.y;
+        pastStateY = gamepad2.y;
 
         //If you press a, the spinner will stop spinning regardless of its initial state
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             spinY = false;
             spinX = false;
         }

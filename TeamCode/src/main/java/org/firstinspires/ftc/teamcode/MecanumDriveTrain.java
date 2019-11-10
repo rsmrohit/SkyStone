@@ -111,6 +111,13 @@ public class MecanumDriveTrain {
         // Update the joystick input to calculate  wheel powers
         wheels.UpdateInput(left_x, left_y, right_x);
 
+        if (gamepad1.dpad_up) {
+            frontLeft.setPower(wheels.getFrontLeftPower());
+            frontRight.setPower(wheels.getFrontRightPower());
+            backRight.setPower(wheels.getRearRightPower());
+            backLeft.setPower(wheels.getRearLeftPower());
+        }
+
         if (!malinDrive){
             frontLeft.setPower(wheels.getFrontLeftPower());
             frontRight.setPower(wheels.getFrontRightPower());
