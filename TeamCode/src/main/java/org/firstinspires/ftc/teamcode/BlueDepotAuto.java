@@ -32,10 +32,10 @@ public class BlueDepotAuto extends BaseAutonomous {
             gyroTurn(TURN_SPEED,60);
             encoderMecanumDrive(DRIVE_SPEED,6,1,-0.8660254,-0.5);
             succ();
-            encoderMecanumDrive(0.2,60,10,-0.5,0.8660254);
+            encoderMecanumDrive(0.2,67,10,-0.5,0.8660254);
             succstop();
             gyroTurn(0.4,90);
-            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,47,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
             spit();
             encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);
@@ -48,10 +48,10 @@ public class BlueDepotAuto extends BaseAutonomous {
             gyroTurn(TURN_SPEED,135);
             //encoderMecanumDrive(DRIVE_SPEED,8,2,0.93969,0.34202);
             succ();
-            encoderMecanumDrive(0.2,60,10,1,1);
+            encoderMecanumDrive(0.2,67,10,1,1);
             succstop();
             gyroTurn(0.4,90);
-            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,47,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
             spit();
             encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);
@@ -61,9 +61,9 @@ public class BlueDepotAuto extends BaseAutonomous {
 
             gyroTurn(TURN_SPEED,90);
             succ();
-            encoderMecanumDrive(0.2,60,10,0,1);
+            encoderMecanumDrive(0.2,67,10,0,1);
             succstop();
-            encoderMecanumDrive(1.0,50,10,0,-1);
+            encoderMecanumDrive(1.0,47,10,0,-1);
             encoderMecanumDrive(1.0,220,10,1,0);
             spit();
             encoderMecanumDrive(DRIVE_SPEED,50,2,-1,0);

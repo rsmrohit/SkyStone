@@ -100,13 +100,6 @@ public class MecanumDriveTrain {
         }
         malinPastState = gamepad1.right_bumper;
 
-        if (gamepad1.right_trigger > 0.1){
-            speedlimiter = 0.28;
-        }else if (gamepad1.left_trigger > 0.1){
-            speedlimiter = 0.65;
-        }else {
-            speedlimiter = 1;
-        }
 
         // Update the joystick input to calculate  wheel powers
         wheels.UpdateInput(left_x, left_y, right_x);

@@ -377,7 +377,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
-    // simple directional drive function for a mecanum drive train
+    // function to test out specified motor
     public void testdrive(double speed, double distance, DcMotor input ) {
 
         int newTarget;
@@ -403,19 +403,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
             input.setPower(wheels.getRearRightPower()*speed);
 
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+
             while (opModeIsActive()  && (input.isBusy())) {
 
-                // Display it for the driver.
-                //         telemetry.addData("Path1",  "Running to %7d :%7d", newFrontLeftTarget,  newFrontRightTarget);
-                //       telemetry.addData("Path2",  "Running at %7d :%7d",
 
-                telemetry.addData("BackRightPower",input.getPower());
+                telemetry.addData("motor power",input.getPower());
                 telemetry.addData("current position",input.getCurrentPosition());
 
                 telemetry.update();
@@ -432,58 +424,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
-
-    // NOT USED; uses encoders to drive - no gyro - tank drive
-    public void encoderDrive(double speed, double leftCm, double rightCm, double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(leftCm * COUNTS_PER_CM);
-            newRightTarget = robot.frontRight.getCurrentPosition() + (int)(rightCm * COUNTS_PER_CM);
-            robot.frontLeft.setTargetPosition(newLeftTarget);
-            robot.frontRight.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.frontLeft.setPower(Math.abs(speed));
-            robot.frontRight.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (robot.frontLeft.isBusy() && robot.frontRight.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        robot.frontLeft.getCurrentPosition(),
-                        robot.frontRight.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        }
-    }
 
     // turn to an angle using gyro
     public void gyroTurn (  double speed, double angle) {
@@ -605,26 +545,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         sleep(100);
     }
 
-    public void leftTurn(){
-        robot.frontLeft.setPower(-1);
-        robot.backLeft.setPower(-1);
-        sleep(270);
-        robot.frontLeft.setPower(0);
-        robot.backLeft.setPower(0);
-    }
-
-    public void rightTurn(){
-        robot.frontLeft.setPower(0.5);
-        robot.backLeft.setPower(0.5);
-        sleep(400);
-        robot.frontLeft.setPower(0);
-        robot.backLeft.setPower(0);
-    }
-
-    public void correctGyroTurn(double speed, double angle){
-        angle *= -1;
-        gyroTurn(speed, angle);
-    }
 
 
     public void initVuforia(){
@@ -797,17 +717,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
     public String vuforiaJoint(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
         runtime.reset();
 
-        // WARNING:
-        // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
-        // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
-        // CONSEQUENTLY do not put any driving commands in this loop.
-        // To restore the normal opmode structure, just un-comment the following line:
-
-        // waitForStart();
-
-        // Note: To use the remote camera preview:
-        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
-        // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
         while (runtime.seconds()<1.5 && !isStopRequested()){
@@ -859,7 +768,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
         targetsSkyStone.activate();
-        while (runtime.seconds()<5 && !isStopRequested()){
+        while (runtime.seconds()<1.5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {

@@ -31,13 +31,13 @@ public class RedDepotAuto extends BaseAutonomous {
             gyroTurn(TURN_SPEED,45);
             //encoderMecanumDrive(DRIVE_SPEED,8,2,0.93969,0.34202);
             succ();
-            encoderMecanumDrive(0.2,60,10,-1,1);
+            encoderMecanumDrive(0.2,67,10,-1,1);
             succstop();
             gyroTurn(0.4,90);
             encoderMecanumDrive(1.0,50,10,0,-1);
             encoderMecanumDrive(1.0,220,10,-1,0);
             spit();
-            encoderMecanumDrive(DRIVE_SPEED,50,2,1,0);
+            encoderMecanumDrive(DRIVE_SPEED,55,2,1,0);
 
         } else if (location.equals("Left")){
             gyroTurn(TURN_SPEED,120);
@@ -45,7 +45,7 @@ public class RedDepotAuto extends BaseAutonomous {
 
             succ();
 
-            encoderMecanumDrive(0.2,60,10,0.5,0.8660254);
+            encoderMecanumDrive(0.2,67,10,0.5,0.8660254);
 
             succstop();
             gyroTurn(0.4,90);
@@ -56,12 +56,12 @@ public class RedDepotAuto extends BaseAutonomous {
         }else if (location.equals("Center")){
             gyroTurn(TURN_SPEED,90);
             succ();
-            encoderMecanumDrive(0.2,60,10,0,1);
+            encoderMecanumDrive(0.2,67,10,0,1);
             succstop();
             encoderMecanumDrive(1.0,50,10,0,-1);
             encoderMecanumDrive(1.0,220,10,-1,0);
             spit();
-            encoderMecanumDrive(DRIVE_SPEED,50,2,1,0);
+            encoderMecanumDrive(DRIVE_SPEED,55,2,1,0);
         }
 
 
