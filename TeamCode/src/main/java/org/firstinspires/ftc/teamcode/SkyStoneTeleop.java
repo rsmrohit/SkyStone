@@ -205,6 +205,17 @@ public class SkyStoneTeleop extends OpMode{
             robot.spinner2.setPower(0);
         }
 
+        robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+        robot.verticalSlider.setPower(gamepad2.left_stick_y);
+
+
+
+//        telemetry.addData("vertical left position:",robot.verticalLeft.getCurrentPosition());
+//        telemetry.addData("vertical right position:",robot.verticalRight.getCurrentPosition());
+//        telemetry.addData("horizontal position:",robot.horizontal.getCurrentPosition());
+        telemetry.addData("vert",gamepad2.left_stick_y);
+        telemetry.addData("horz",gamepad2.right_stick_x);
+
 
         telemetry.update();
 

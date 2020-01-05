@@ -18,11 +18,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 public class HardwareSkyStone  {
 
-    /* Public OpMode members. */
+
     public DcMotor frontLeft = null;
     public DcMotor frontRight = null;
     public DcMotor backLeft = null;
     public DcMotor backRight = null;
+
+    public DcMotor verticalSlider = null;
+    public DcMotor horizontalSlider = null;
+
+    public DcMotor verticalLeft = null;
+    public DcMotor verticalRight = null;
+    public DcMotor horizontal = null;
 
 
 
@@ -66,12 +73,20 @@ public class HardwareSkyStone  {
         frontRight = hwMap.get(DcMotor.class, "front_right");
         backRight = hwMap.get(DcMotor.class, "back_right");
         backLeft = hwMap.get(DcMotor.class, "back_left");
+
+        verticalSlider = hwMap.get(DcMotor.class, "vert_slider");
+        horizontalSlider = hwMap.get(DcMotor.class, "horz_slider");
+
+        //Define odometry "motors"
+        verticalLeft = hwMap.dcMotor.get("front_left");
+        verticalRight = hwMap.dcMotor.get("front_right");
+        horizontal = hwMap.dcMotor.get("back_right");
+
+
         spinner = hwMap.get(DcMotor.class, "succ_1");
         spinner2 = hwMap.get(DcMotor.class,"succ_2");
         leftclaw = hwMap.get(CRServo.class, "left_claw");
         rightclaw = hwMap.get(CRServo.class, "right_claw");
-
-
 
 
         if (!test) {
@@ -79,30 +94,46 @@ public class HardwareSkyStone  {
             realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
             realgyro.calibrate();
 
-
-//            realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
-//            realgyro2.calibrate();
-
-
-
-
-
-
         }
 
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
+        verticalSlider.setDirection(DcMotor.Direction.REVERSE);
         spinner.setDirection(DcMotor.Direction.REVERSE);
         spinner2.setDirection(DcMotor.Direction.FORWARD);
         rightclaw.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        if (!test) {
 
 
-        }
+
 
 
 
@@ -113,6 +144,8 @@ public class HardwareSkyStone  {
         backLeft.setPower(0);
         spinner.setPower(0);
         spinner2.setPower(0);
+        verticalSlider.setPower(0);
+        horizontalSlider.setPower(0);
 
         leftclaw.setPower(0);
         rightclaw.setPower(0);
@@ -120,9 +153,6 @@ public class HardwareSkyStone  {
 
         if (!test) {
             realgyro.resetZAxisIntegrator();
-
-
-
         }
 
     }
@@ -135,11 +165,10 @@ public class HardwareSkyStone  {
             backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            verticalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            if (!test) {
 
-
-            }
         }
         else {
 
@@ -148,13 +177,14 @@ public class HardwareSkyStone  {
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
             spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            verticalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            if (!test) {
 
-
-            }
 
 
             // set to run using encoder
@@ -162,12 +192,6 @@ public class HardwareSkyStone  {
             frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            if (!test) {
-
-
-            }
-
 
         }
     }
