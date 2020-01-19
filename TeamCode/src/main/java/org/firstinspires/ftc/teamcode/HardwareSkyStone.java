@@ -151,7 +151,7 @@ public class HardwareSkyStone  {
 
         leftclaw.setPower(0);
         rightclaw.setPower(0);
-        clamper.setPosition(0.16);
+        clamper.setPosition(0.5);
 
         if (!test) {
             realgyro.resetZAxisIntegrator();
@@ -168,8 +168,10 @@ public class HardwareSkyStone  {
             spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            verticalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+
+            verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
         else {
@@ -184,7 +186,8 @@ public class HardwareSkyStone  {
             spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            verticalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 

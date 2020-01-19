@@ -29,17 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.io.File;
 
 import static org.firstinspires.ftc.teamcode.HardwareSkyStone.TeleOpRunMode;
 
@@ -67,6 +61,11 @@ public class SkyStoneTeleop extends OpMode{
     boolean pastStateRbumper;
     boolean pastStateLbumper;
 
+    boolean pastStateB;
+    int bPresses;
+
+    boolean autolifting;
+
     boolean pastNani;
     boolean pastOof;
     boolean pastBruh;
@@ -79,8 +78,16 @@ public class SkyStoneTeleop extends OpMode{
 
     boolean startTheDrop;
 
+    int bin;
+    int liftTarget;
+
 
     Integer gyroAngle;
+
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 0.5 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_CM       = 6 ;     // This measurement is more exact than inches
+    static final double     COUNTS_PER_CM         = ((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI));
 
 
 
@@ -118,6 +125,10 @@ public class SkyStoneTeleop extends OpMode{
         pastStateRbumper = false;
         pastStateLbumper = false;
 
+        pastStateB = false;
+        bPresses = 0;
+        autolifting = false;
+
         pastBruh = false;
         pastNani = false;
         pastOof = false;
@@ -131,12 +142,14 @@ public class SkyStoneTeleop extends OpMode{
         unclamp = false;
         startTheDrop = false;
 
+        bin = 0;
+
 
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
-        telemetry.addData("clamper", robot.clamper.getPosition());
+
         telemetry.update();
 
 
@@ -162,6 +175,7 @@ public class SkyStoneTeleop extends OpMode{
     @Override
     public void loop() {
 
+        stopLift(robot.verticalSlider);
 
 
         //Mecanum Drivetrain function to set powers
@@ -208,7 +222,7 @@ public class SkyStoneTeleop extends OpMode{
         if (gamepad2.right_bumper) {
             robot.clamper.setPosition(1.0);
         } else if (gamepad2.left_bumper) {
-            robot.clamper.setPosition(0.16);
+            robot.clamper.setPosition(0.5);
         }
         // spinner limiting and logic
         if (spinX) {
@@ -222,10 +236,38 @@ public class SkyStoneTeleop extends OpMode{
             robot.spinner2.setPower(0);
         }
 
-        if (gamepad2.left_stick_y < -0.2 || gamepad2.left_stick_y > 0.2) {
-            robot.verticalSlider.setPower(gamepad2.left_stick_y);
-        } else if (gamepad2.left_stick_y >= -0.2 || gamepad2.left_stick_y <= 0.2) {
-            robot.verticalSlider.setPower(-0.2);
+        if (gamepad2.b && !pastStateB){
+            bPresses++;
+            runtime.reset();
+        }
+        pastStateB = gamepad2.b;
+
+        if (runtime.seconds()>0.3){
+            if (bPresses!=0){
+                startvertlift();
+            }
+            bPresses = 0;
+        }
+
+
+
+        if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50) {
+            telemetry.addData("going", " down");
+            robot.verticalSlider.setTargetPosition(-50);
+            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
+
+        } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 2000){
+            telemetry.addData("going", " up");
+            robot.verticalSlider.setTargetPosition(2000);
+            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
+
+        } else if (!autolifting){
+
+            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.verticalSlider.setPower(0);
+
         }
 
         robot.horizontalSlider.setPower(gamepad2.right_stick_x);
@@ -235,9 +277,10 @@ public class SkyStoneTeleop extends OpMode{
 //        telemetry.addData("vertical left position:",robot.verticalLeft.getCurrentPosition());
 //        telemetry.addData("vertical right position:",robot.verticalRight.getCurrentPosition());
 //        telemetry.addData("horizontal position:",robot.horizontal.getCurrentPosition());
-        telemetry.addData("vert",gamepad2.left_stick_y);
-        telemetry.addData("horz",gamepad2.right_stick_x);
-        telemetry.addData("clamper",robot.clamper.getPosition());
+
+//        telemetry.addData("stick",gamepad2.right_stick_y);
+        telemetry.addData("vertical encoder",robot.verticalSlider.getCurrentPosition());
+        telemetry.addData("bpresses",bPresses);
 
 
         telemetry.update();
@@ -249,5 +292,46 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void stop() {
+    }
+
+    public void startvertlift(){
+
+        switch(bPresses){
+            case 1:
+                startLift(1.0,400,robot.verticalSlider);
+                break;
+            case 2:
+                startLift(1.0,800,robot.verticalSlider);
+                break;
+            case 3:
+                startLift(1.0,1200,robot.verticalSlider);
+                break;
+            case 4:
+                startLift(1.0,1600,robot.verticalSlider);
+                break;
+        }
+
+    }
+
+    public void startLift(double speed, int height, DcMotor input ) {
+        autolifting = true;
+
+        telemetry.addData("starting lift", " bruh");
+        telemetry.update();
+
+        input.setTargetPosition(height);
+        input.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        input.setPower(speed);
+
+    }
+    public void stopLift(DcMotor input){
+        if (!input.isBusy()){
+            autolifting = false;
+            // Stop all motion;
+            input.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
     }
 }
