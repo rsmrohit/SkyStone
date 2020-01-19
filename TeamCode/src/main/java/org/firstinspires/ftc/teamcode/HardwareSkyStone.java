@@ -36,6 +36,7 @@ public class HardwareSkyStone  {
     public CRServo leftclaw = null;
     public CRServo rightclaw = null;
 
+    public Servo clamper = null;
 
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
@@ -87,6 +88,7 @@ public class HardwareSkyStone  {
         spinner2 = hwMap.get(DcMotor.class,"succ_2");
         leftclaw = hwMap.get(CRServo.class, "left_claw");
         rightclaw = hwMap.get(CRServo.class, "right_claw");
+        clamper = hwMap.get(Servo.class, "clamper");
 
 
         if (!test) {
@@ -149,7 +151,7 @@ public class HardwareSkyStone  {
 
         leftclaw.setPower(0);
         rightclaw.setPower(0);
-
+        clamper.setPosition(0.16);
 
         if (!test) {
             realgyro.resetZAxisIntegrator();

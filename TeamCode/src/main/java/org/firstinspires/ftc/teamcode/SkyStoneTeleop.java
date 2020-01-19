@@ -64,6 +64,8 @@ public class SkyStoneTeleop extends OpMode{
 
     boolean pastStateX;
     boolean pastStateY;
+    boolean pastStateRbumper;
+    boolean pastStateLbumper;
 
     boolean pastNani;
     boolean pastOof;
@@ -72,6 +74,8 @@ public class SkyStoneTeleop extends OpMode{
 
     boolean spinX;
     boolean spinY;
+    boolean clamp;
+    boolean unclamp;
 
     boolean startTheDrop;
 
@@ -111,6 +115,8 @@ public class SkyStoneTeleop extends OpMode{
 
         pastStateX = false;
         pastStateY = false;
+        pastStateRbumper = false;
+        pastStateLbumper = false;
 
         pastBruh = false;
         pastNani = false;
@@ -121,6 +127,8 @@ public class SkyStoneTeleop extends OpMode{
 
         spinX = false;
         spinY = false;
+        clamp = false;
+        unclamp = false;
         startTheDrop = false;
 
 
@@ -128,7 +136,10 @@ public class SkyStoneTeleop extends OpMode{
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
+        telemetry.addData("clamper", robot.clamper.getPosition());
         telemetry.update();
+
+
     }
 
     /*
@@ -156,11 +167,11 @@ public class SkyStoneTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad2.left_bumper){
+        if (gamepad2.left_trigger != 0){
             telemetry.addData("bruh","bruh");
             robot.rightclaw.setPower(-1.0);
             robot.leftclaw.setPower(-1.0);
-        }else if(gamepad2.right_bumper){
+        }else if(gamepad2.right_trigger != 0){
             robot.rightclaw.setPower(1.0);
             robot.leftclaw.setPower(1.0);
         } else{
@@ -187,12 +198,18 @@ public class SkyStoneTeleop extends OpMode{
         }
         pastStateY = gamepad2.y;
 
+
         //If you press a, the spinner will stop spinning regardless of its initial state
         if (gamepad2.a) {
             spinY = false;
             spinX = false;
         }
 
+        if (gamepad2.right_bumper) {
+            robot.clamper.setPosition(1.0);
+        } else if (gamepad2.left_bumper) {
+            robot.clamper.setPosition(0.16);
+        }
         // spinner limiting and logic
         if (spinX) {
             robot.spinner.setPower(-1.0 * bucketLimiter);
@@ -205,8 +222,13 @@ public class SkyStoneTeleop extends OpMode{
             robot.spinner2.setPower(0);
         }
 
+        if (gamepad2.left_stick_y < -0.2 || gamepad2.left_stick_y > 0.2) {
+            robot.verticalSlider.setPower(gamepad2.left_stick_y);
+        } else if (gamepad2.left_stick_y >= -0.2 || gamepad2.left_stick_y <= 0.2) {
+            robot.verticalSlider.setPower(-0.2);
+        }
+
         robot.horizontalSlider.setPower(gamepad2.right_stick_x);
-        robot.verticalSlider.setPower(gamepad2.left_stick_y);
 
 
 
@@ -215,6 +237,7 @@ public class SkyStoneTeleop extends OpMode{
 //        telemetry.addData("horizontal position:",robot.horizontal.getCurrentPosition());
         telemetry.addData("vert",gamepad2.left_stick_y);
         telemetry.addData("horz",gamepad2.right_stick_x);
+        telemetry.addData("clamper",robot.clamper.getPosition());
 
 
         telemetry.update();
