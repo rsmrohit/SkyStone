@@ -355,10 +355,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 telemetry.addData("FrontRightPower",robot.frontRight.getPower());
                 telemetry.addData("BackRightPower",robot.backRight.getPower());
                 telemetry.addData("BackLeftPower",robot.backLeft.getPower());
-//                telemetry.addData("front left power",  wheels.wheelPowers[0]);
-//                telemetry.addData("back left power",  wheels.wheelPowers[2]);
-//                telemetry.addData("back right power",  wheels.wheelPowers[3]);
-//                telemetry.addData("front right power",  wheels.wheelPowers[1]);
+
                 telemetry.update();
             }
 

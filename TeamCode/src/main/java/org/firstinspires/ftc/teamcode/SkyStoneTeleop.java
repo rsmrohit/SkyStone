@@ -282,16 +282,24 @@ public class SkyStoneTeleop extends OpMode{
 
         if (!horilifting){
             if (gamepad2.right_stick_x > 0 ){
-                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
+                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
+
                 robot.horizontalSlider.setPower(gamepad2.right_stick_x);
 
             } else if (gamepad2.right_stick_x < 0 && robot.horizontalSlider.getCurrentPosition() > 0 ){
+
                 robot.horizontalSlider.setTargetPosition(0);
                 robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.horizontalSlider.setPower(gamepad2.right_stick_x);
 
             } else {
-                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
+                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                }
                 robot.horizontalSlider.setPower(0);
             }
         }
@@ -302,15 +310,10 @@ public class SkyStoneTeleop extends OpMode{
 
 
 
-//        telemetry.addData("vertical left position:",robot.verticalLeft.getCurrentPosition());
-//        telemetry.addData("vertical right position:",robot.verticalRight.getCurrentPosition());
-//        telemetry.addData("horizontal position:",robot.horizontal.getCurrentPosition());
-
-
-        telemetry.addData("vertical encoder",robot.verticalSlider.getCurrentPosition());
-        telemetry.addData("horizontal encoder", robot.horizontalSlider.getCurrentPosition());
-
-
+        telemetry.addData("front left",robot.frontLeft.getPower());
+        telemetry.addData("front right", robot.frontRight.getPower());
+        telemetry.addData("back left", robot.backLeft.getPower());
+        telemetry.addData("back right", robot.backRight.getPower());
 
         telemetry.update();
 
