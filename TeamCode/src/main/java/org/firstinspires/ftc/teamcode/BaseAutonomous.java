@@ -747,6 +747,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
                     return "Left";
                 } else if (translation.get(1)/mmPerInch < 7.8){
                     return "Center" ;
+                } else {
+                    return "Right";
                 }
 
             }
