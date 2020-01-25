@@ -65,6 +65,7 @@ public class SkyStoneTeleop extends OpMode{
     int bPresses;
 
     boolean autolifting;
+    boolean horilifting;
 
     boolean pastNani;
     boolean pastOof;
@@ -128,6 +129,7 @@ public class SkyStoneTeleop extends OpMode{
         pastStateB = false;
         bPresses = 0;
         autolifting = false;
+        horilifting = false;
 
         pastBruh = false;
         pastNani = false;
@@ -176,6 +178,7 @@ public class SkyStoneTeleop extends OpMode{
     public void loop() {
 
         stopLift(robot.verticalSlider);
+        stopLift(robot.horizontalSlider);
 
 
         //Mecanum Drivetrain function to set powers
@@ -220,10 +223,11 @@ public class SkyStoneTeleop extends OpMode{
         }
 
         if (gamepad2.right_bumper) {
-            robot.clamper.setPosition(1.0);
+            robot.clamper.setPosition(0.9);
         } else if (gamepad2.left_bumper) {
-            robot.clamper.setPosition(0.5);
+            robot.clamper.setPosition(0.4);
         }
+
         // spinner limiting and logic
         if (spinX) {
             robot.spinner.setPower(-1.0 * bucketLimiter);
@@ -250,27 +254,51 @@ public class SkyStoneTeleop extends OpMode{
         }
 
 
+        if(!autolifting){
+            if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50) {
+                telemetry.addData("going", " down");
+                robot.verticalSlider.setTargetPosition(-50);
+                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
 
-        if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50) {
-            telemetry.addData("going", " down");
-            robot.verticalSlider.setTargetPosition(-50);
-            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
+            } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 2000){
+                telemetry.addData("going", " up");
+                robot.verticalSlider.setTargetPosition(2000);
+                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
 
-        } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 2000){
-            telemetry.addData("going", " up");
-            robot.verticalSlider.setTargetPosition(2000);
-            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
+            } else {
 
-        } else if (!autolifting){
+                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.verticalSlider.setPower(0);
 
-            robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.verticalSlider.setPower(0);
+            }
 
         }
 
-        robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+        if (gamepad2.dpad_left && !horilifting){
+            startLift(1.0,0,robot.horizontalSlider);
+        }
+
+        if (!horilifting){
+            if (gamepad2.right_stick_x > 0 ){
+                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+
+            } else if (gamepad2.right_stick_x < 0 && robot.horizontalSlider.getCurrentPosition() > 0 ){
+                robot.horizontalSlider.setTargetPosition(0);
+                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+
+            } else {
+                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.horizontalSlider.setPower(0);
+            }
+        }
+
+
+
+
 
 
 
@@ -278,9 +306,10 @@ public class SkyStoneTeleop extends OpMode{
 //        telemetry.addData("vertical right position:",robot.verticalRight.getCurrentPosition());
 //        telemetry.addData("horizontal position:",robot.horizontal.getCurrentPosition());
 
-//        telemetry.addData("stick",gamepad2.right_stick_y);
+
         telemetry.addData("vertical encoder",robot.verticalSlider.getCurrentPosition());
-        telemetry.addData("bpresses",bPresses);
+        telemetry.addData("horizontal encoder", robot.horizontalSlider.getCurrentPosition());
+
 
 
         telemetry.update();
@@ -301,32 +330,45 @@ public class SkyStoneTeleop extends OpMode{
                 startLift(1.0,400,robot.verticalSlider);
                 break;
             case 2:
-                startLift(1.0,800,robot.verticalSlider);
+                startLift(1.0,1000,robot.verticalSlider);
                 break;
             case 3:
-                startLift(1.0,1200,robot.verticalSlider);
+                startLift(1.0,1480,robot.verticalSlider);
                 break;
             case 4:
-                startLift(1.0,1600,robot.verticalSlider);
+                startLift(1.0,2000,robot.verticalSlider);
                 break;
         }
 
     }
 
-    public void startLift(double speed, int height, DcMotor input ) {
-        autolifting = true;
+    public void startLift(double speed, int target, DcMotor input ) {
+        if (input.equals(robot.verticalSlider)){
+            autolifting = true;
+        }
 
-        telemetry.addData("starting lift", " bruh");
-        telemetry.update();
+        if (input.equals(robot.horizontalSlider)){
+            horilifting = true;
+        }
 
-        input.setTargetPosition(height);
+
+        input.setTargetPosition(target);
         input.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         input.setPower(speed);
 
     }
+
     public void stopLift(DcMotor input){
         if (!input.isBusy()){
-            autolifting = false;
+
+            if (input.equals(robot.verticalSlider)){
+                autolifting = false;
+            }
+
+            if (input.equals(robot.horizontalSlider)){
+                horilifting = false;
+            }
+
             // Stop all motion;
             input.setPower(0);
 

@@ -134,11 +134,6 @@ public class HardwareSkyStone  {
         rightclaw.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
-
-
-
-
-
         // Set all motors to zero power
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -151,7 +146,7 @@ public class HardwareSkyStone  {
 
         leftclaw.setPower(0);
         rightclaw.setPower(0);
-        clamper.setPosition(0.5);
+        clamper.setPosition(0);
 
         if (!test) {
             realgyro.resetZAxisIntegrator();
