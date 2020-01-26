@@ -24,26 +24,20 @@ public class RedDepotAuto extends BaseAutonomous {
         // String location = vuforiaJoint(haddi,buddi);
         String location = "Center";
 
-        for (int i = 0 ;i < 10;i++){
-            encoderMecanumDrive(0.5,50,5,0,1);
-            encoderMecanumDrive(0.5,50,5,0,-1);
-        }
 
-
-        /*
 
         if (location.equals("Center")){
-            encoderMecanumDrive(0.5,10,1,-1,0);
-            sleep(1000);
-            encoderMecanumDrive(1,50,5,0,1);
-            sleep(1000);
+            encoderMecanumDrive(0.8,26,1,-1,0);
+            sleep(500);
+            encoderMecanumDrive(1,60,5,0,1);
+            sleep(500);
             gyroTurn(0.5,-45);
-            sleep(1000);
-            encoderMecanumDrive(0.7,40,4,-1,1);
+            sleep(500);
+            succ();
+            encoderMecanumDrive(0.5,50,4,-1,1);
+
         }
 
-
-         */
 
 
 
