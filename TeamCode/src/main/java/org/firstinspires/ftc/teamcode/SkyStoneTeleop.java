@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
 import static org.firstinspires.ftc.teamcode.HardwareSkyStone.TeleOpRunMode;
 
 
@@ -206,26 +205,26 @@ public class SkyStoneTeleop extends OpMode{
 
 
         // turn on/off spinner
-        if (gamepad2.x && !pastStateX) {
+        if (gamepad1.x && !pastStateX) {
             spinX = !spinX;
             if (spinX) {
                 spinY = false;
             }
         }
-        pastStateX = gamepad2.x;
+        pastStateX = gamepad1.x;
 
         // turn on/off spinner in opposite direction
-        if (gamepad2.y && !pastStateY) {
+        if (gamepad1.y && !pastStateY) {
             spinY = !spinY;
             if (spinY) {
                 spinX = false;
             }
         }
-        pastStateY = gamepad2.y;
+        pastStateY = gamepad1.y;
 
 
         //If you press a, the spinner will stop spinning regardless of its initial state
-        if (gamepad2.a) {
+        if (gamepad1.a) {
             spinY = false;
             spinX = false;
         }
@@ -270,10 +269,10 @@ public class SkyStoneTeleop extends OpMode{
                 robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
 
-            } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 2500){
+            } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 15000){
                 stopped = false;
                 telemetry.addData("going", " up");
-                robot.verticalSlider.setTargetPosition(2500);
+                robot.verticalSlider.setTargetPosition(15000);
                 robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y));
 
@@ -298,19 +297,19 @@ public class SkyStoneTeleop extends OpMode{
         }
 
         if (!horilifting){
-            if (gamepad2.right_stick_x > 0 ){
+            if (-gamepad2.right_stick_y > 0 ){
 
                 if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
                     robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
 
-                robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
 
-            } else if (gamepad2.right_stick_x < 0 && robot.horizontalSlider.getCurrentPosition() > 0 ){
+            } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > 0 ){
 
                 robot.horizontalSlider.setTargetPosition(0);
                 robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.horizontalSlider.setPower(gamepad2.right_stick_x);
+                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
 
             } else {
 
