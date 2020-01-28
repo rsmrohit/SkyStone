@@ -27,14 +27,20 @@ public class RedDepotAuto extends BaseAutonomous {
 
 
         if (location.equals("Center")){
-            encoderMecanumDrive(0.8,26,1,-1,0);
+            encoderMecanumDrive(0.55,31,1,-1,0);
             sleep(500);
             encoderMecanumDrive(1,60,5,0,1);
             sleep(500);
-            gyroTurn(0.5,-45);
+            gyroTurn(0.5,-52);
             sleep(500);
             succ();
-            encoderMecanumDrive(0.5,50,4,-1,1);
+            encoderMecanumDrive(0.5,55,4,-1,1);
+//            succstop();
+//            encoderMecanumDrive(0.8,50,4,0,-1);
+//            gyroTurn(0.8,-90);
+//            dumbencoderMecanumDrive(1,130, 4, 0,-1,true);
+//            encoderMecanumDrive(0.8,10, 4, 1,0);
+//            robot.clamper.setPosition(0.03);
 
         }
 

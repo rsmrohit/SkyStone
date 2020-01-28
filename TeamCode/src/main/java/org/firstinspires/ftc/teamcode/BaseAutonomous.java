@@ -46,6 +46,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double     P_DRIVE_COEFF           = 0.03;
 
     private TFObjectDetector tfod;
+    boolean dumbdriving;
 
     public VuforiaTrackables haddi;
     public List<VuforiaTrackable> buddi;
@@ -540,6 +541,123 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.rightclaw.setPower(0);
         robot.leftclaw.setPower(0);
         sleep(100);
+    }
+
+    public void dumbencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y, boolean out) {
+        int     newFrontLeftTarget;
+        int     newFrontRightTarget;
+        int     newBackLeftTarget;
+        int     newBackRightTarget;
+        int     frontLeftSign;
+        int     frontRightSign;
+        int     backLeftSign;
+        int     backRightSign;
+        MecanumWheels wheels = new MecanumWheels();
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            wheels.UpdateInput(move_x, move_y, 0);
+
+            frontLeftSign = (int) (Math.abs(wheels.getFrontLeftPower())/wheels.getFrontLeftPower());
+            frontRightSign = (int) (Math.abs(wheels.getFrontRightPower())/wheels.getFrontRightPower());
+            backLeftSign = (int) (Math.abs(wheels.getRearLeftPower()) /wheels.getRearLeftPower());
+            backRightSign = (int) (Math.abs(wheels.getRearRightPower())/wheels.getRearRightPower());
+
+            telemetry.addData("fl",frontLeftSign);
+            telemetry.addData("fr",frontRightSign);
+            telemetry.addData("bl",backLeftSign);
+            telemetry.addData("br",backRightSign);
+            telemetry.update();
+
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontLeftSign);
+            newBackLeftTarget = robot.backLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backLeftSign);
+
+            newFrontRightTarget = robot.frontRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontRightSign);
+            newBackRightTarget = robot.backRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backRightSign);
+
+
+            robot.frontLeft.setTargetPosition(newFrontLeftTarget);
+            robot.frontRight.setTargetPosition(newFrontRightTarget);
+            robot.backLeft.setTargetPosition(newBackLeftTarget);
+            robot.backRight.setTargetPosition(newBackRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            telemetry.clear();
+            telemetry.addData("move_x:",move_x);
+            telemetry.addData("move_y:",move_y);
+            telemetry.update();
+
+
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed   ));
+            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed ));
+            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed    ));
+            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed    ));
+
+            dumbdriving = true;
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+
+            horizontalEncoder(out,wheels);
+
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
+                    (areMotorsRunning(wheels) )) {
+
+                telemetry.addData("running","yes");
+                telemetry.update();
+
+            }
+
+            dumbdriving = false;
+            // Stop all motion;
+            robot.frontLeft.setPower(0);
+            robot.frontRight.setPower(0);
+            robot.backRight.setPower(0);
+            robot.backLeft.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        }
+    }
+
+    public void horizontalEncoder(boolean out, MecanumWheels wheels) {
+
+        if (out) {
+            robot.clamper.setPosition(0.2);
+            robot.horizontalSlider.setTargetPosition(500);
+        } else {
+            robot.horizontalSlider.setTargetPosition(0);
+        }
+        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.horizontalSlider.setPower(1);
+        while(robot.horizontalSlider.isBusy() && areMotorsRunning(wheels)){
+
+        }
+        robot.horizontalSlider.setPower(0);
+        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
 

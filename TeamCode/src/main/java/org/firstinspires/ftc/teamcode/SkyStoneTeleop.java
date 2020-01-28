@@ -186,6 +186,7 @@ public class SkyStoneTeleop extends OpMode{
 
         stopLift(robot.verticalSlider);
         stopLift(robot.horizontalSlider);
+        telemetry.clear();
 
 
         //Mecanum Drivetrain function to set powers
@@ -297,8 +298,10 @@ public class SkyStoneTeleop extends OpMode{
         }
 
         if (!horilifting){
+            telemetry.addData("not horilifing",true);
             if (-gamepad2.right_stick_y > 0 ){
 
+                telemetry.addData("going", "out");
                 if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
                     robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
@@ -313,6 +316,7 @@ public class SkyStoneTeleop extends OpMode{
 
             } else {
 
+                telemetry.addData("staying", " still");
                 if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
                     robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
@@ -324,8 +328,6 @@ public class SkyStoneTeleop extends OpMode{
 
 
 
-
-        telemetry.addData("vertical slider",robot.verticalSlider.getCurrentPosition());
 
         telemetry.update();
 
@@ -343,6 +345,7 @@ public class SkyStoneTeleop extends OpMode{
         switch(bPresses){
             case 1:
                 startLift(1.0,400,robot.verticalSlider);
+
                 break;
             case 2:
                 startLift(1.0,1000,robot.verticalSlider);
@@ -371,24 +374,34 @@ public class SkyStoneTeleop extends OpMode{
         input.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         input.setPower(speed);
 
+        autolifting = false;
+
     }
 
     public void stopLift(DcMotor input){
         if (!input.isBusy()){
 
-            if (input.equals(robot.verticalSlider)){
+            if (input.equals(robot.verticalSlider) && autolifting){
                 autolifting = false;
+                // Stop all motion;
+                input.setPower(0);
+
+                // Turn off RUN_TO_POSITION
+                input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             }
 
-            if (input.equals(robot.horizontalSlider)){
+            if (input.equals(robot.horizontalSlider) && horilifting){
                 horilifting = false;
+
+                // Stop all motion;
+                input.setPower(0);
+
+                // Turn off RUN_TO_POSITION
+                input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
-            // Stop all motion;
-            input.setPower(0);
 
-            // Turn off RUN_TO_POSITION
-            input.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 }
