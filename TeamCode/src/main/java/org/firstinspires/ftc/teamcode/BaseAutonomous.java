@@ -646,9 +646,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
             telemetry.update();
 
 
-
-
-
             // reset the timeout time and start motion.
             runtime.reset();
             robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed   ));
@@ -701,6 +698,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         } else {
             robot.horizontalSlider.setTargetPosition(0);
         }
+
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.horizontalSlider.setPower(1);
         while(robot.horizontalSlider.isBusy() && areMotorsRunning(wheels)){

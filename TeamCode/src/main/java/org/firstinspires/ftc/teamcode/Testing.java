@@ -17,9 +17,12 @@ public class Testing extends BaseAutonomous {
         //Wait for the start button to be pressed
         waitForStart();
 
-        gyroCurve(0.5,-45,0,1);
+        //should move in a curve to the right
+        gyroCurve(0.5,-45,0,0.5);
 
 
+        //should turn in place
+        gyroCurve(0.5,0,0,0);
 
 //        dumbencoderMecanumDrive(1,130, 4, 0,1,false);
 
