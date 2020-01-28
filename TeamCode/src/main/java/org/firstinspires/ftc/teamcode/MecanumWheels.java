@@ -27,6 +27,13 @@ public class MecanumWheels {
         }
     }
 
+    public MecanumWheels(double x, double y, double t){
+        move_x = x;
+        move_y = y;
+        turn = t;
+        CalclulatePower();
+    }
+
     private void CalclulatePower() {
 
 
