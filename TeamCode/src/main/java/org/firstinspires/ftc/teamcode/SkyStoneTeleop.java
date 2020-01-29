@@ -294,8 +294,9 @@ public class SkyStoneTeleop extends OpMode{
                     stoptarget = robot.verticalSlider.getCurrentPosition();
                 }
                 stopped = true;
-                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.verticalSlider.setTargetPosition(stoptarget);
+                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
                 robot.verticalSlider.setPower(0.5);
 
 
