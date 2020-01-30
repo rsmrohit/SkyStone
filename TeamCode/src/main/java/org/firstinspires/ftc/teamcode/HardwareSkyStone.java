@@ -38,6 +38,8 @@ public class HardwareSkyStone  {
 
     public Servo clamper = null;
 
+    public Servo capstone = null;
+
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
 
@@ -89,6 +91,7 @@ public class HardwareSkyStone  {
         leftclaw = hwMap.get(CRServo.class, "left_claw");
         rightclaw = hwMap.get(CRServo.class, "right_claw");
         clamper = hwMap.get(Servo.class, "clamper");
+        capstone = hwMap.get(Servo.class,"capstone_servo");
 
 
         if (!test) {
@@ -147,6 +150,7 @@ public class HardwareSkyStone  {
         leftclaw.setPower(0);
         rightclaw.setPower(0);
         clamper.setPosition(0.03);
+        capstone.setPosition(0);
 
         if (!test) {
             realgyro.resetZAxisIntegrator();
@@ -167,6 +171,8 @@ public class HardwareSkyStone  {
 
             verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }
         else {
@@ -180,9 +186,10 @@ public class HardwareSkyStone  {
 
             spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 

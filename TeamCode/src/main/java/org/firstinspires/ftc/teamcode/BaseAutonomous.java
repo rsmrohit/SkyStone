@@ -443,6 +443,60 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
+    public void gyroTurnAndMove( double speed, double angle, double ratio, double intendedDirection){
+
+        while (opModeIsActive() && !onHeadingbruh(speed, angle, P_TURN_COEFF,ratio,intendedDirection)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.addData("current_heading", getAverageGyro());
+            telemetry.update();
+        }
+    }
+
+    boolean onHeadingbruh(double speed, double angle, double PCoeff, double ratio, double intendedDirection){
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        double delta = robot.realgyro.getIntegratedZValue()-intendedDirection;
+        double deltaRad = delta*Math.PI/180;
+        double x = ratio*Math.sin(deltaRad);
+        double y = ratio*Math.cos(deltaRad);
+
+        MecanumWheels wheels = new MecanumWheels(x,y,rightSpeed);
+
+        // Send desired speeds to motors.
+        robot.frontLeft.setPower(wheels.getFrontLeftPower());
+        robot.frontRight.setPower(wheels.getFrontRightPower());
+        robot.backLeft.setPower(wheels.getRearLeftPower());
+        robot.backRight.setPower(wheels.getRearRightPower());
+
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
     boolean onHeadingish(double speed, double angle, double PCoeff, double x, double y){
         double   error ;
         double   steer ;
@@ -567,8 +621,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void grab(){
-        robot.rightclaw.setPower(-1);
-        robot.leftclaw.setPower(-1);
+        robot.rightclaw.setPower(1);
+        robot.leftclaw.setPower(1);
         sleep(350);
         robot.rightclaw.setPower(0);
         robot.leftclaw.setPower(0);
@@ -586,8 +640,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void release(){
-        robot.rightclaw.setPower(1);
-        robot.leftclaw.setPower(1);
+        robot.rightclaw.setPower(-1);
+        robot.leftclaw.setPower(-1);
         sleep(350);
         robot.rightclaw.setPower(0);
         robot.leftclaw.setPower(0);
@@ -640,7 +694,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            telemetry.clear();
+
             telemetry.addData("move_x:",move_x);
             telemetry.addData("move_y:",move_y);
             telemetry.update();
@@ -694,7 +748,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         if (out) {
             robot.clamper.setPosition(0.2);
-            robot.horizontalSlider.setTargetPosition(500);
+            robot.horizontalSlider.setTargetPosition(350);
         } else {
             robot.horizontalSlider.setTargetPosition(0);
         }

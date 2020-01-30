@@ -20,27 +20,55 @@ public class RedDepotAuto extends BaseAutonomous {
 
         //This line is used only if we align it with the edge of the mat block
         //encoderMecanumDrive(0.5,8.75,1,1,0);
-
-        // String location = vuforiaJoint(haddi,buddi);
         String location = "Center";
 
-
+//        encoderMecanumDrive(DRIVE_SPEED, 25, 4,0,1);
+//
+//        String location = vuforiaJoint(haddi,buddi);
+//        telemetry.addData("location", location);
+//        telemetry.update();
 
         if (location.equals("Center")){
-            encoderMecanumDrive(0.55,31,1,-1,0);
-            sleep(500);
-            encoderMecanumDrive(1,60,5,0,1);
-            sleep(500);
-            gyroTurn(0.5,-52);
-            sleep(500);
+            encoderMecanumDrive(0.75,33.5,1,-1,0);
+            sleep(100);
+            encoderMecanumDrive(0.9,60,5,0,1);
+            sleep(200);
+            gyroTurn(0.9,-52);
+            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
+            telemetry.update();
+            sleep(200);
             succ();
-            encoderMecanumDrive(0.5,55,4,-1,1);
-//            succstop();
-//            encoderMecanumDrive(0.8,50,4,0,-1);
-//            gyroTurn(0.8,-90);
-//            dumbencoderMecanumDrive(1,130, 4, 0,-1,true);
-//            encoderMecanumDrive(0.8,10, 4, 1,0);
-//            robot.clamper.setPosition(0.03);
+            encoderMecanumDrive(0.75,55,4,-1,0.955);
+            encoderMecanumDrive(1,68,4,0,-1);
+            succstop();
+            robot.clamper.setPosition(0.2);
+            gyroTurn(0.9,-88);
+            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
+            telemetry.update();
+            dumbencoderMecanumDrive(1,100, 4, 0,-1,true);
+            robot.clamper.setPosition(0.03);
+            dumbencoderMecanumDrive(1,208, 4, 0,1,false);
+            gyroTurn(0.9,-52);
+            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
+            telemetry.update();
+            sleep(200);
+            succ();
+            encoderMecanumDrive(0.75,105,4,-1,0.98);
+            sleep(100);
+            encoderMecanumDrive(1,90,4,0,-1);
+            succstop();
+            robot.clamper.setPosition(0.2);
+            gyroTurn(1,-86);
+            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
+            telemetry.update();
+            dumbencoderMecanumDrive(1,155, 4, 0,-1,true);
+            robot.clamper.setPosition(0.03);
+            dumbencoderMecanumDrive(1,30, 4, 0,1,false);
+            gyroTurn(1,-100);
+            dumbencoderMecanumDrive(1,60, 4, 0,1,false);
+
+
+
 
         }
 

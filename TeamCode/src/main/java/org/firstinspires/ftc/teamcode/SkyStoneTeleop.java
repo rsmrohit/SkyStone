@@ -274,6 +274,7 @@ public class SkyStoneTeleop extends OpMode{
 
         if(!autolifting){
             if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50 ) {
+                telemetry.addData("going","down");
                 stopped = false;
 
                 robot.verticalSlider.setTargetPosition(-50);
@@ -335,7 +336,8 @@ public class SkyStoneTeleop extends OpMode{
         }
 
 
-
+        telemetry.addData("horizontal",robot.horizontalSlider.getCurrentPosition());
+        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
         telemetry.update();
 
     }
