@@ -30,24 +30,25 @@ public class RedDepotAuto extends BaseAutonomous {
 
         if (location.equals("Center")){
             encoderMecanumDrive(0.75,33.5,1,-1,0);
-            sleep(100);
             encoderMecanumDrive(0.9,60,5,0,1);
-            sleep(200);
             gyroTurn(0.9,-52);
-            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
-            telemetry.update();
-            sleep(200);
             succ();
             encoderMecanumDrive(0.75,55,4,-1,0.955);
+            encoderMecanumDrive(1,15,4,0.819152,-0.573576);
             encoderMecanumDrive(1,68,4,0,-1);
             succstop();
             robot.clamper.setPosition(0.2);
-            gyroTurn(0.9,-88);
+            gyroTurn(0.9,-90);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
-            dumbencoderMecanumDrive(1,100, 4, 0,-1,true);
+            encoderMecanumDrive(1,135,10,0,-1);
+            bruh();
             robot.clamper.setPosition(0.03);
-            dumbencoderMecanumDrive(1,208, 4, 0,1,false);
+
+            sleep(30000);
+
+
+            dumbencoderMecanumDrive(1,230, 4, 0,1,false);
             gyroTurn(0.9,-52);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
@@ -58,7 +59,7 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(1,90,4,0,-1);
             succstop();
             robot.clamper.setPosition(0.2);
-            gyroTurn(1,-86);
+            gyroTurn(1,-90);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
             dumbencoderMecanumDrive(1,155, 4, 0,-1,true);

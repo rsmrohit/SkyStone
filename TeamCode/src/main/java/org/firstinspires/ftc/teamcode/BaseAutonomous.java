@@ -744,11 +744,71 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
+    public void verticalEncoder(int target){
+        robot.verticalSlider.setTargetPosition(target);
+        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.verticalSlider.setPower(1);
+        while (robot.verticalSlider.isBusy()){
+
+        }
+        robot.verticalSlider.setPower(0);
+        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void bruh(){
+        robot.verticalSlider.setPower(1);
+        sleep(200);
+        robot.verticalSlider.setPower(0);
+        robot.horizontalSlider.setPower(1);
+        sleep(850);
+        robot.horizontalSlider.setPower(0);
+        robot.verticalSlider.setPower(-1);
+        sleep(200);
+        robot.verticalSlider.setPower(0);
+    }
+
+    public void upandOut(){
+
+
+        robot.verticalSlider.setTargetPosition(300);
+        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.verticalSlider.setPower(1);
+
+
+        robot.horizontalSlider.setTargetPosition(320);
+        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.horizontalSlider.setPower(1);
+        while(robot.horizontalSlider.isBusy()){
+            telemetry.addData("horizontal position",robot.horizontalSlider.getCurrentPosition());
+            telemetry.update();
+
+        }
+
+        robot.horizontalSlider.setPower(0);
+        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        robot.verticalSlider.setTargetPosition(0);
+        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.verticalSlider.setPower(1);
+        while (robot.verticalSlider.isBusy()){
+
+        }
+        robot.verticalSlider.setPower(0);
+        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("gone","down");
+        telemetry.update();
+        sleep(1000);
+
+
+    }
+
     public void horizontalEncoder(boolean out, MecanumWheels wheels) {
 
         if (out) {
-            robot.clamper.setPosition(0.2);
-            robot.horizontalSlider.setTargetPosition(350);
+//            robot.clamper.setPosition(0.2);
+            robot.horizontalSlider.setTargetPosition(300);
         } else {
             robot.horizontalSlider.setTargetPosition(0);
         }
@@ -756,6 +816,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.horizontalSlider.setPower(1);
         while(robot.horizontalSlider.isBusy() && areMotorsRunning(wheels)){
+            telemetry.addData("current position",robot.horizontalSlider.getCurrentPosition());
+            telemetry.update();
 
         }
         robot.horizontalSlider.setPower(0);
