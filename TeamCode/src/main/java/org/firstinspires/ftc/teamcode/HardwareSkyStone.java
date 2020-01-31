@@ -150,7 +150,7 @@ public class HardwareSkyStone  {
         leftclaw.setPower(0);
         rightclaw.setPower(0);
         clamper.setPosition(0.03);
-        capstone.setPosition(0);
+        capstone.setPosition(0.2);
 
         if (!test) {
             realgyro.resetZAxisIntegrator();

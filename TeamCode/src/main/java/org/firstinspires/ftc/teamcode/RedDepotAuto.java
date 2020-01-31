@@ -12,6 +12,7 @@ public class RedDepotAuto extends BaseAutonomous {
         inithardware(false);
 
         telemetry.addData("program","initialized");
+        telemetry.addData("horizontal encoder", robot.horizontalSlider.getCurrentPosition());
         telemetry.update();
 
 
@@ -29,47 +30,75 @@ public class RedDepotAuto extends BaseAutonomous {
 //        telemetry.update();
 
         if (location.equals("Center")){
-            encoderMecanumDrive(0.75,33.5,1,-1,0);
+            //first block
+            //strafe and move forward for block setup
+            encoderMecanumDrive(0.75,32.5,1,-1,0);
             encoderMecanumDrive(0.9,60,5,0,1);
             gyroTurn(0.9,-52);
             succ();
-            encoderMecanumDrive(0.75,55,4,-1,0.955);
-            encoderMecanumDrive(1,15,4,0.819152,-0.573576);
+            //move to collect block
+            encoderMecanumDrive(0.75,75,4,-1,0.95);
+            //fine tune grab block
+            encoderMecanumDrive(1,22.5,4,0.819152,-0.573576);
+            //move back to be able to move to foundation
             encoderMecanumDrive(1,68,4,0,-1);
             succstop();
             robot.clamper.setPosition(0.2);
-            gyroTurn(0.9,-90);
+            //turn towards foundation
+            gyroTurn(0.9,-85);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
-            encoderMecanumDrive(1,135,10,0,-1);
+            encoderMecanumDrive(1,90,10,0,-1);
+            //move to foundation
             bruh();
             robot.clamper.setPosition(0.03);
 
-            sleep(30000);
-
-
-            dumbencoderMecanumDrive(1,230, 4, 0,1,false);
-            gyroTurn(0.9,-52);
-            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
-            telemetry.update();
-            sleep(200);
+            //second block
+            //coming back to get second block
+            dumbencoderMecanumDrive(1,180, 4, 0,1,false);
+            encoderMecanumDrive(1,55,10,-1,0);
             succ();
-            encoderMecanumDrive(0.75,105,4,-1,0.98);
-            sleep(100);
-            encoderMecanumDrive(1,90,4,0,-1);
+            encoderMecanumDrive(0.7,30,10,0,1);
             succstop();
+            robot.clamper.setPosition(0.15);
+            encoderMecanumDrive(1,130,10,1,-1);
+            encoderMecanumDrive(1,130,10,0,-1);
+            bruh();
+            robot.clamper.setPosition(0.03);
+            //move to park
+            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
+
+
+            //turn to collect
+//            gyroTurn(0.9,-48);
+//            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
+//            telemetry.update();
+//            sleep(200);
+            //start sucking
+
+            /*
+
+            //strafe to block pt 1
+            encoderMecanumDrive(0.75,77,4,-0.93,1);
+            //drive straight to separate blocks for collection
+            encoderMecanumDrive(0.9,30,4,0,1);
+            succstop();
+            //move back to original position
+            encoderMecanumDrive(1,80,4,0,-1);
             robot.clamper.setPosition(0.2);
-            gyroTurn(1,-90);
+            //turn to straight position
+            gyroTurn(1,-85);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
-            dumbencoderMecanumDrive(1,155, 4, 0,-1,true);
+            //move to foundation
+            encoderMecanumDrive(1,150, 4, 0,-1);
+            bruh();
             robot.clamper.setPosition(0.03);
-            dumbencoderMecanumDrive(1,30, 4, 0,1,false);
-            gyroTurn(1,-100);
-            dumbencoderMecanumDrive(1,60, 4, 0,1,false);
+            //move to park
+            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
 
 
-
+*/
 
         }
 

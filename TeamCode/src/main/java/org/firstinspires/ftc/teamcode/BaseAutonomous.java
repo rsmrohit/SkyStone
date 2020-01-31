@@ -758,13 +758,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     public void bruh(){
         robot.verticalSlider.setPower(1);
-        sleep(200);
+        sleep(300);
         robot.verticalSlider.setPower(0);
         robot.horizontalSlider.setPower(1);
-        sleep(850);
+        sleep(1500);
         robot.horizontalSlider.setPower(0);
         robot.verticalSlider.setPower(-1);
-        sleep(200);
+        sleep(300);
         robot.verticalSlider.setPower(0);
     }
 
@@ -1071,21 +1071,20 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
             }
 
-            //center -0.2
-            //left -2.8
-
-
             // Provide feedback as to where the robot is located (if we know).
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -1.5){
+                if (translation.get(1)/mmPerInch < 0.45){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 2.2){
+                } else if (translation.get(1)/mmPerInch < 7.8){
                     return "Center" ;
+                } else {
+                    return "Right";
                 }
+
             }
             else {
                 telemetry.addData("Visible Target", "none");

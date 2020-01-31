@@ -74,6 +74,8 @@ public class SkyStoneTeleop extends OpMode{
     boolean pastBruh;
     boolean pastXp;
 
+    boolean pastCap;
+
     boolean spinX;
     boolean spinY;
     boolean clamp;
@@ -148,6 +150,7 @@ public class SkyStoneTeleop extends OpMode{
         unclamp = false;
         startTheDrop = false;
 
+        pastCap = false;
         bin = 0;
 
         stopped = true;
@@ -205,6 +208,14 @@ public class SkyStoneTeleop extends OpMode{
         }
 
 
+        if (gamepad2.x && !pastCap){
+            if (robot.capstone.getPosition() == 0.2){
+                robot.capstone.setPosition(0.5);
+            }else{
+                robot.capstone.setPosition(0.2);
+            }
+        }
+        pastCap = gamepad2.x;
 
 
         // turn on/off spinner
@@ -250,8 +261,13 @@ public class SkyStoneTeleop extends OpMode{
 
         //Clamper code
         if (gamepad2.right_bumper) {
-            robot.clamper.setPosition(0.2);
+            telemetry.addData("clamp","initiated");
+            telemetry.update();
+            robot.clamper.setPosition(0.15);
         } else if (gamepad2.left_bumper) {
+            telemetry.addData("clamp","opened");
+            telemetry.update();
+
             robot.clamper.setPosition(0.03);
         }
 
@@ -337,7 +353,7 @@ public class SkyStoneTeleop extends OpMode{
 
 
         telemetry.addData("horizontal",robot.horizontalSlider.getCurrentPosition());
-        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
+//        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
         telemetry.update();
 
     }
