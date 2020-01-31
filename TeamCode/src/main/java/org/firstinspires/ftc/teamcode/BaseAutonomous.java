@@ -768,6 +768,18 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.verticalSlider.setPower(0);
     }
 
+    public void bruhbuddi(){
+        robot.verticalSlider.setPower(1);
+        sleep(1000);
+        robot.verticalSlider.setPower(0);
+        robot.horizontalSlider.setPower(1);
+        sleep(1500);
+        robot.horizontalSlider.setPower(0);
+        robot.verticalSlider.setPower(-1);
+        sleep(1000);
+        robot.verticalSlider.setPower(0);
+    }
+
     public void upandOut(){
 
 

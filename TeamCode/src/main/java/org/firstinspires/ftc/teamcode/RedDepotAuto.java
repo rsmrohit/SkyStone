@@ -43,7 +43,7 @@ public class RedDepotAuto extends BaseAutonomous {
             //move back to be able to move to foundation
             encoderMecanumDrive(1,68,4,0,-1);
             succstop();
-            robot.clamper.setPosition(0.2);
+            robot.clamper.setPosition(0.15);
             //turn towards foundation
             gyroTurn(0.9,-85);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
@@ -54,16 +54,18 @@ public class RedDepotAuto extends BaseAutonomous {
             robot.clamper.setPosition(0.03);
 
             //second block
+
             //coming back to get second block
             dumbencoderMecanumDrive(1,180, 4, 0,1,false);
-            encoderMecanumDrive(1,55,10,-1,0);
+            encoderMecanumDrive(1,58,10,-1,0);
             succ();
-            encoderMecanumDrive(0.7,30,10,0,1);
+            encoderMecanumDrive(0.7,20,10,0,1);
+            gyroTurn(0.9,-90);
+            encoderMecanumDrive(1,130,10,1,-1);
             succstop();
             robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(1,130,10,1,-1);
             encoderMecanumDrive(1,130,10,0,-1);
-            bruh();
+            bruhbuddi();
             robot.clamper.setPosition(0.03);
             //move to park
             dumbencoderMecanumDrive(1,70, 4, 0,1,false);
