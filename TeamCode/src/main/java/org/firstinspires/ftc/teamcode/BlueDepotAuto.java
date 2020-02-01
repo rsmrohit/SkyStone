@@ -134,7 +134,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             dumbencoderMecanumDrive(1,160, 4, 0,1,false);
 
             //strafing sideways
-            encoderMecanumDrive(1,75,10,1,0);
+            encoderMecanumDrive(1,70,10,1,0);
             succ();
             encoderMecanumDrive(0.5,25,10,1,1);
 
