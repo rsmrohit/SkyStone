@@ -266,8 +266,6 @@ public class SkyStoneTeleop extends OpMode{
 
 
 
-
-
         //Clamper code
         if (gamepad2.right_bumper) {
             telemetry.addData("clamp","initiated");
@@ -345,9 +343,9 @@ public class SkyStoneTeleop extends OpMode{
 
                 robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
 
-            } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > 0 ){
+            } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > -150 ){
 
-                robot.horizontalSlider.setTargetPosition(0);
+                robot.horizontalSlider.setTargetPosition(-150);
                 robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
 
