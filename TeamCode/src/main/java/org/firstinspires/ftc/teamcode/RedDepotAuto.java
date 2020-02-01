@@ -11,20 +11,17 @@ public class RedDepotAuto extends BaseAutonomous {
         //Initialize the hardware using BaseAutonomous Function
         inithardware(false);
 
-        telemetry.addData("program","initialized");
+
         telemetry.addData("horizontal encoder", robot.horizontalSlider.getCurrentPosition());
+        telemetry.addData("vertical encoder", robot.verticalSlider.getCurrentPosition());
         telemetry.update();
 
 
         //Wait for the start button to be pressed
         waitForStart();
+        encoderMecanumDrive(0.9,32,5,0,1);
+        String location = vuforiaJoint(haddi,buddi);
 
-        //This line is used only if we align it with the edge of the mat block
-        //encoderMecanumDrive(0.5,8.75,1,1,0);
-        String location = "Center";
-
-//        encoderMecanumDrive(DRIVE_SPEED, 25, 4,0,1);
-//
 //        String location = vuforiaJoint(haddi,buddi);
 //        telemetry.addData("location", location);
 //        telemetry.update();
@@ -33,7 +30,8 @@ public class RedDepotAuto extends BaseAutonomous {
             //first block
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,32.5,1,-1,0);
-            encoderMecanumDrive(0.9,60,5,0,1);
+            sleep(20000);
+            encoderMecanumDrive(0.9,28,5,0,1);
             gyroTurn(0.9,-52);
             succ();
             //move to collect block
@@ -57,50 +55,114 @@ public class RedDepotAuto extends BaseAutonomous {
 
             //coming back to get second block
             dumbencoderMecanumDrive(1,180, 4, 0,1,false);
-            encoderMecanumDrive(1,58,10,-1,0);
+
+            //strafing sideways
+            encoderMecanumDrive(1,50,10,-1,0);
             succ();
             encoderMecanumDrive(0.7,20,10,0,1);
-            gyroTurn(0.9,-90);
+            gyroTurn(0.9,-85);
             encoderMecanumDrive(1,130,10,1,-1);
             succstop();
             robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(1,130,10,0,-1);
+            encoderMecanumDrive(1,132,10,0,-1);
             bruhbuddi();
-            robot.clamper.setPosition(0.03);
+
+
             //move to park
             dumbencoderMecanumDrive(1,70, 4, 0,1,false);
 
 
-            //turn to collect
-//            gyroTurn(0.9,-48);
-//            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
-//            telemetry.update();
-//            sleep(200);
-            //start sucking
+        } else if (location.equals("Right")){
+            //first block
+            //strafe and move forward for block setup
+            encoderMecanumDrive(0.75,8,1,-1,0);
 
-            /*
-
-            //strafe to block pt 1
-            encoderMecanumDrive(0.75,77,4,-0.93,1);
-            //drive straight to separate blocks for collection
-            encoderMecanumDrive(0.9,30,4,0,1);
+            encoderMecanumDrive(0.9,28,5,0,1);
+            gyroTurn(0.9,-52);
+            succ();
+            //move to collect block
+            encoderMecanumDrive(0.75,75,4,-1,0.95);
+            //fine tune grab block
+            encoderMecanumDrive(1,20,4,0.819152,-0.573576);
+            //move back to be able to move to foundation
+            encoderMecanumDrive(1,73,4,0,-1);
             succstop();
-            //move back to original position
-            encoderMecanumDrive(1,80,4,0,-1);
-            robot.clamper.setPosition(0.2);
-            //turn to straight position
-            gyroTurn(1,-85);
+            robot.clamper.setPosition(0.15);
+            //turn towards foundation
+            gyroTurn(0.9,-85);
             telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
             telemetry.update();
+            encoderMecanumDrive(1,108,10,0,-1);
             //move to foundation
-            encoderMecanumDrive(1,150, 4, 0,-1);
             bruh();
             robot.clamper.setPosition(0.03);
+
+            //second block
+
+            //coming back to get second block
+            dumbencoderMecanumDrive(1,200, 4, 0,1,false);
+
+            //strafing sideways
+            encoderMecanumDrive(1,52,10,-1,0);
+            succ();
+            encoderMecanumDrive(0.7,20,10,0,1);
+            gyroTurn(0.9,-86);
+            encoderMecanumDrive(1,123,10,1,-1);
+            succstop();
+            robot.clamper.setPosition(0.15);
+            encoderMecanumDrive(1,160,10,0,-1);
+            bruhbuddi();
+
+
             //move to park
             dumbencoderMecanumDrive(1,70, 4, 0,1,false);
 
 
-*/
+        } else {
+            //first block
+            //strafe and move forward for block setup
+            encoderMecanumDrive(0.75,18,1,1,0);
+
+            encoderMecanumDrive(0.9,28,5,0,1);
+            gyroTurn(0.9,52);
+            succ();
+            //move to collect block
+            encoderMecanumDrive(0.75,75,4,1.0,0.95);
+            //fine tune grab block
+            encoderMecanumDrive(1,20,4,-0.819152,-0.573576);
+            telemetry.addData("finished move","one");
+            telemetry.update();
+            gyroTurn(0.9,0);
+            encoderMecanumDrive(1,45,10,0,-1);
+            gyroTurnAndMove(0.9,-88,0.5,90);
+            succstop();
+            robot.clamper.setPosition(0.15);
+            //move back to be able to move to foundation
+            encoderMecanumDrive(1,120,4,0,-1);
+
+            //move to foundation
+            bruh();
+            robot.clamper.setPosition(0.03);
+
+            //second block
+
+            //coming back to get second block
+            dumbencoderMecanumDrive(1,160, 4, 0,1,false);
+
+            //strafing sideways
+            encoderMecanumDrive(1,52,10,-1,0);
+            succ();
+            encoderMecanumDrive(0.7,20,10,0,1);
+            gyroTurn(0.9,-86);
+            encoderMecanumDrive(1,123,10,1,-1);
+            succstop();
+            robot.clamper.setPosition(0.15);
+            encoderMecanumDrive(1,125,10,0,-1);
+            bruhbuddi();
+
+
+            //move to park
+            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
 
         }
 

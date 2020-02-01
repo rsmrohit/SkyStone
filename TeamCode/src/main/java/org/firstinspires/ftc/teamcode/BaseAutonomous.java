@@ -350,7 +350,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
 
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels)) {
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels) && !isStopRequested()) {
 
                 telemetry.addData("FrontLeftPower",robot.frontLeft.getPower());
                 telemetry.addData("FrontRightPower",robot.frontRight.getPower());
@@ -757,61 +757,109 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void bruh(){
+        ElapsedTime t = new ElapsedTime();
+        t.reset();
         robot.verticalSlider.setPower(1);
-        sleep(300);
+
+        while (t.seconds()< 1.0 && robot.verticalSlider.getCurrentPosition()<400){
+            telemetry.addData("vertical position",robot.verticalSlider.getCurrentPosition());
+            telemetry.update();
+        }
         robot.verticalSlider.setPower(0);
+
+
         robot.horizontalSlider.setPower(1);
-        sleep(1500);
+        t.reset();
+        while (t.seconds()<1.5 && robot.horizontalSlider.getCurrentPosition()<500){
+
+        }
+
         robot.horizontalSlider.setPower(0);
+
         robot.verticalSlider.setPower(-1);
-        sleep(300);
+        t.reset();
+        while (t.seconds()<1.0 && robot.verticalSlider.getCurrentPosition() > 150){
+
+        }
         robot.verticalSlider.setPower(0);
+
     }
 
     public void bruhbuddi(){
+        ElapsedTime t = new ElapsedTime();
+        t.reset();
         robot.verticalSlider.setPower(1);
-        sleep(1000);
+
+        while (t.seconds()<2.0 && robot.verticalSlider.getCurrentPosition()<800){
+            telemetry.addData("vertical position",robot.verticalSlider.getCurrentPosition());
+            telemetry.update();
+        }
+
         robot.verticalSlider.setPower(0);
+
+
+
         robot.horizontalSlider.setPower(1);
-        sleep(1500);
+        t.reset();
+        while (t.seconds()<1.5 && robot.horizontalSlider.getCurrentPosition()<500){
+
+        }
+
         robot.horizontalSlider.setPower(0);
+        robot.clamper.setPosition(0.03);
+
+        robot.horizontalSlider.setPower(-1);
+        t.reset();
+        while (t.seconds()<1.5 && robot.horizontalSlider.getCurrentPosition()>100){
+
+        }
+
+        robot.horizontalSlider.setPower(0);
+
         robot.verticalSlider.setPower(-1);
-        sleep(1000);
+        t.reset();
+        while (t.seconds()<2 && robot.verticalSlider.getCurrentPosition() > 150){
+
+        }
         robot.verticalSlider.setPower(0);
+
     }
 
     public void upandOut(){
 
+        ElapsedTime t = new ElapsedTime();
+        t.reset();
 
-        robot.verticalSlider.setTargetPosition(300);
+
+        robot.verticalSlider.setTargetPosition(350);
         robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.verticalSlider.setPower(1);
+        robot.verticalSlider.setPower(-1);
 
 
         robot.horizontalSlider.setTargetPosition(320);
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.horizontalSlider.setPower(1);
-        while(robot.horizontalSlider.isBusy()){
+        while(robot.horizontalSlider.isBusy() && t.seconds()<1.5){
             telemetry.addData("horizontal position",robot.horizontalSlider.getCurrentPosition());
             telemetry.update();
 
         }
+
+
 
         robot.horizontalSlider.setPower(0);
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         robot.verticalSlider.setTargetPosition(0);
-        robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.verticalSlider.setPower(1);
+
         while (robot.verticalSlider.isBusy()){
 
         }
         robot.verticalSlider.setPower(0);
         robot.verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        telemetry.addData("gone","down");
-        telemetry.update();
-        sleep(1000);
+
 
 
     }
@@ -828,6 +876,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.horizontalSlider.setPower(1);
         while(robot.horizontalSlider.isBusy() && areMotorsRunning(wheels)){
+            telemetry.addData("dumb drive","succing");
             telemetry.addData("current position",robot.horizontalSlider.getCurrentPosition());
             telemetry.update();
 
@@ -1003,6 +1052,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
         haddi = targetsSkyStone;
         buddi = allTrackables;
+        targetsSkyStone.activate();
     }
 
 
@@ -1010,7 +1060,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         runtime.reset();
 
 
-        targetsSkyStone.activate();
         while (runtime.seconds()<1.5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
@@ -1038,9 +1087,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < 0.45){
+                if (translation.get(1)/mmPerInch < -6.9){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 7.8){
+                } else if (translation.get(1)/mmPerInch < 1.3){
                     return "Center" ;
                 } else {
                     return "Right";
@@ -1061,7 +1110,6 @@ public abstract class BaseAutonomous extends LinearOpMode {
         runtime.reset();
 
 
-        targetsSkyStone.activate();
         while (runtime.seconds()<1.5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
@@ -1089,9 +1137,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < 0.45){
+                if (translation.get(1)/mmPerInch < -5){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 7.8){
+                } else if (translation.get(1)/mmPerInch < 3){
                     return "Center" ;
                 } else {
                     return "Right";

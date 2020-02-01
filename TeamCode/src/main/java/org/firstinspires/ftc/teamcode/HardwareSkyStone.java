@@ -169,9 +169,11 @@ public class HardwareSkyStone  {
             horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-            verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            //commenting this out to use the initial horizontal encoder value
+            //horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         }

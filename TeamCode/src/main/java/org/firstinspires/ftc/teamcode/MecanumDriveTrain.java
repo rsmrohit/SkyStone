@@ -89,39 +89,15 @@ public class MecanumDriveTrain {
             right_x = -gamepad1.right_stick_x;
         }
 
-        if(gamepad1.left_bumper) {
-            left_x = -left_x;
-        } else {
-            left_x = +left_x;
-        }
-
-        if (gamepad1.right_bumper && !malinPastState){
-            malinDrive = !malinDrive;
-        }
-        malinPastState = gamepad1.right_bumper;
-
 
         // Update the joystick input to calculate  wheel powers
         wheels.UpdateInput(left_x, left_y, right_x);
 
-        if (gamepad1.dpad_up) {
-            frontLeft.setPower(wheels.getFrontLeftPower());
-            frontRight.setPower(wheels.getFrontRightPower());
-            backRight.setPower(wheels.getRearRightPower());
-            backLeft.setPower(wheels.getRearLeftPower());
-        }
 
-        if (!malinDrive){
-            frontLeft.setPower(wheels.getFrontLeftPower());
-            frontRight.setPower(wheels.getFrontRightPower());
-            backRight.setPower(wheels.getRearRightPower());
-            backLeft.setPower(wheels.getRearLeftPower());
-        }else{
-            frontLeft.setPower(-wheels.getRearRightPower());
-            frontRight.setPower(-wheels.getRearLeftPower());
-            backRight.setPower(-wheels.getFrontLeftPower());
-            backLeft.setPower(-wheels.getFrontRightPower());
-        }
+        frontLeft.setPower(wheels.getFrontLeftPower());
+        frontRight.setPower(wheels.getFrontRightPower());
+        backRight.setPower(wheels.getRearRightPower());
+        backLeft.setPower(wheels.getRearLeftPower());
 
 
     }

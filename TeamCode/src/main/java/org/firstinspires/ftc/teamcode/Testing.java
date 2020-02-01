@@ -14,13 +14,32 @@ public class Testing extends BaseAutonomous {
 
         inithardware(false);
         telemetry.addData("program", "intialized");
+        telemetry.addData("horizontal encoder",robot.horizontalSlider.getCurrentPosition());
+        telemetry.addData("vertical encoder", robot.verticalSlider.getCurrentPosition());
         telemetry.update();
-
+        robot.clamper.setPosition(0.15);
 
         //Wait for the start button to be pressed
         waitForStart();
 
-        bruh();
+        encoderMecanumDrive(0.9,33,5,0,1);
+        String s = vuforiaJointo(haddi,buddi);
+        telemetry.addData("location", s);
+        telemetry.update();
+        sleep(1000);
+
+        //gyroTurnAndMove(0.9,-90,0.5,90);
+
+//        bruhbuddi();
+//        robot.clamper.setPosition(0.03);
+
+//        upandOut();
+
+//        bruh();
+//        telemetry.addData("horizontal encoder",robot.horizontalSlider.getCurrentPosition());
+//
+//        telemetry.update();
+//        sleep(1000);
 
 
     }
