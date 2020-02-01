@@ -92,6 +92,11 @@ public class MecanumDriveTrain {
 
         // Update the joystick input to calculate  wheel powers
         wheels.UpdateInput(left_x, left_y, right_x);
+        telemetry.addData("front left",wheels.getFrontLeftPower());
+        telemetry.addData("front right", wheels.getFrontRightPower());
+        telemetry.addData("back right", wheels.getRearRightPower());
+        telemetry.addData("back left", wheels.getRearLeftPower());
+        telemetry.update();
 
 
         frontLeft.setPower(wheels.getFrontLeftPower());

@@ -17,18 +17,18 @@ public class BlueDepotAuto extends BaseAutonomous {
 
         //Wait for the start button to be pressed
         waitForStart();
-        encoderMecanumDrive(0.9,33,5,0,1);
+        encoderMecanumDrive(0.9,35,5,0,1);
 
-        //String location = vuforiaJointo(haddi,buddi);
-        //telemetry.addData("location", location);
+        String location = vuforiaJointo(haddi,buddi);
+        telemetry.addData("location", location);
         telemetry.update();
-        String location = "Right";
+
 
         if (location.equals("Center")){
             //first block
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,60,1,1,0);
-            encoderMecanumDrive(0.9,27,5,0,1);
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,52);
             succ();
             //move to collect block
@@ -65,7 +65,7 @@ public class BlueDepotAuto extends BaseAutonomous {
 
         }else if(location.equals("Left")){
             encoderMecanumDrive(0.75,24,1,1,0);
-            encoderMecanumDrive(0.9,27,5,0,1);
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,52);
             succ();
             //move to collect block
@@ -107,13 +107,13 @@ public class BlueDepotAuto extends BaseAutonomous {
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,8,1,-1,0);
 
-            encoderMecanumDrive(0.9,28,5,0,1);
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,-52);
             succ();
             //move to collect block
             encoderMecanumDrive(0.75,75,4,-1.0,0.95);
-            //fine tune grab block
 
+            //fine tune grab block
             encoderMecanumDrive(1,20,4,0.819152,-0.573576);
 
             gyroTurn(0.9,0);
@@ -134,7 +134,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             dumbencoderMecanumDrive(1,160, 4, 0,1,false);
 
             //strafing sideways
-            encoderMecanumDrive(1,55,10,1,0);
+            encoderMecanumDrive(1,75,10,1,0);
             succ();
             encoderMecanumDrive(0.5,25,10,1,1);
 

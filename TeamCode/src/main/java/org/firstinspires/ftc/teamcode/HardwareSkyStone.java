@@ -33,8 +33,8 @@ public class HardwareSkyStone  {
 
 
 
-    public CRServo leftclaw = null;
-    public CRServo rightclaw = null;
+    public Servo leftclaw = null;
+    public Servo rightclaw = null;
 
     public Servo clamper = null;
 
@@ -88,8 +88,8 @@ public class HardwareSkyStone  {
 
         spinner = hwMap.get(DcMotor.class, "succ_1");
         spinner2 = hwMap.get(DcMotor.class,"succ_2");
-        leftclaw = hwMap.get(CRServo.class, "left_claw");
-        rightclaw = hwMap.get(CRServo.class, "right_claw");
+        leftclaw = hwMap.get(Servo.class, "left_claw");
+        rightclaw = hwMap.get(Servo.class, "right_claw");
         clamper = hwMap.get(Servo.class, "clamper");
         capstone = hwMap.get(Servo.class,"capstone_servo");
 
@@ -134,7 +134,7 @@ public class HardwareSkyStone  {
         verticalSlider.setDirection(DcMotor.Direction.REVERSE);
         spinner.setDirection(DcMotor.Direction.REVERSE);
         spinner2.setDirection(DcMotor.Direction.FORWARD);
-        rightclaw.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
 
         // Set all motors to zero power
@@ -147,8 +147,9 @@ public class HardwareSkyStone  {
         verticalSlider.setPower(0);
         horizontalSlider.setPower(0);
 
-        leftclaw.setPower(0);
-        rightclaw.setPower(0);
+
+        rightclaw.setPosition(0.5);
+        leftclaw.setPosition(0.5);
         clamper.setPosition(0.03);
         capstone.setPosition(0.2);
 

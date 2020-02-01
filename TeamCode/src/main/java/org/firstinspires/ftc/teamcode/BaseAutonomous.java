@@ -44,6 +44,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double     P_TURN_COEFF            = 0.03;
     static final double     HEADING_THRESHOLD       = 1 ;
     static final double     P_DRIVE_COEFF           = 0.03;
+    static final double     CORRECTION              = Math.sqrt(2);
 
     private TFObjectDetector tfod;
     boolean dumbdriving;
@@ -621,31 +622,28 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void grab(){
-        robot.rightclaw.setPower(1);
-        robot.leftclaw.setPower(1);
-        sleep(350);
-        robot.rightclaw.setPower(0);
-        robot.leftclaw.setPower(0);
-        sleep(150);
+        robot.rightclaw.setPosition(0);
+        robot.leftclaw.setPosition(1.0);
+
     }
 
     public void smallgrab(){
         encoderMecanumDrive(0.4,7,1,0,-1);
-        robot.rightclaw.setPower(-1);
-        robot.rightclaw.setPower(-1);
+        robot.rightclaw.setPosition(1);
+        robot.rightclaw.setPosition(1);
         sleep(100);
-        robot.rightclaw.setPower(0);
-        robot.leftclaw.setPower(0);
+        robot.rightclaw.setPosition(0);
+        robot.leftclaw.setPosition(0);
         sleep(150);
     }
 
     public void release(){
-        robot.rightclaw.setPower(-1);
-        robot.leftclaw.setPower(-1);
+        robot.rightclaw.setPosition(1.0);
+        robot.leftclaw.setPosition(0);
         sleep(350);
-        robot.rightclaw.setPower(0);
-        robot.leftclaw.setPower(0);
-        sleep(100);
+        robot.rightclaw.setPosition(0.5);
+        robot.leftclaw.setPosition(0.5);
+
     }
 
     public void dumbencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y, boolean out) {
@@ -1087,9 +1085,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -6.9){
+                if (translation.get(1)/mmPerInch < -4.2){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 1.3){
+                } else if (translation.get(1)/mmPerInch < 3.05){
                     return "Center" ;
                 } else {
                     return "Right";
@@ -1137,9 +1135,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -5){
+                if (translation.get(1)/mmPerInch < -4.45){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 3){
+                } else if (translation.get(1)/mmPerInch < 2.9){
                     return "Center" ;
                 } else {
                     return "Right";

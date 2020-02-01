@@ -205,21 +205,21 @@ public class SkyStoneTeleop extends OpMode{
         vroom.loop();
 
         if (gamepad1.left_bumper){
-            telemetry.addData("bruh","bruh");
-            robot.rightclaw.setPower(-1.0);
-            robot.leftclaw.setPower(-1.0);
+//            telemetry.addData("bruh","bruh");
+            robot.rightclaw.setPosition(0);
+            robot.leftclaw.setPosition(1.0);
         }else if(gamepad1.right_bumper){
-            robot.rightclaw.setPower(1.0);
-            robot.leftclaw.setPower(1.0);
+            robot.rightclaw.setPosition(1.0);
+            robot.leftclaw.setPosition(0);
         } else{
-            robot.rightclaw.setPower(0);
-            robot.leftclaw.setPower(0);
+            robot.rightclaw.setPosition(0.5);
+            robot.leftclaw.setPosition(0.5);
         }
 
 
         if (gamepad2.x && !pastCap){
             if (robot.capstone.getPosition() == 0.2){
-                robot.capstone.setPosition(0.5);
+                robot.capstone.setPosition(0.53);
             }else{
                 robot.capstone.setPosition(0.2);
             }
@@ -268,17 +268,15 @@ public class SkyStoneTeleop extends OpMode{
 
         //Clamper code
         if (gamepad2.right_bumper) {
-            telemetry.addData("clamp","initiated");
-            telemetry.update();
+//            telemetry.addData("clamp","initiated");
+//            telemetry.update();
             robot.clamper.setPosition(0.14);
         } else if (gamepad2.left_bumper) {
-            telemetry.addData("clamp","opened");
-            telemetry.update();
+//            telemetry.addData("clamp","opened");
+//            telemetry.update();
 
             robot.clamper.setPosition(0.03);
         }
-
-
 
 
         if (gamepad2.b && !pastStateB){
@@ -297,7 +295,7 @@ public class SkyStoneTeleop extends OpMode{
 
         if(!autolifting){
             if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50 ) {
-                telemetry.addData("going","down");
+
                 stopped = false;
 
                 robot.verticalSlider.setTargetPosition(-50);
@@ -360,7 +358,7 @@ public class SkyStoneTeleop extends OpMode{
 
 
         telemetry.addData("horizontal",robot.horizontalSlider.getCurrentPosition());
-        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
+//        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
         telemetry.update();
 
     }

@@ -19,19 +19,18 @@ public class RedDepotAuto extends BaseAutonomous {
 
         //Wait for the start button to be pressed
         waitForStart();
-        encoderMecanumDrive(0.9,32,5,0,1);
+        encoderMecanumDrive(0.9,35,5,0,1);
         String location = vuforiaJoint(haddi,buddi);
 
-//        String location = vuforiaJoint(haddi,buddi);
-//        telemetry.addData("location", location);
-//        telemetry.update();
+        telemetry.addData("location", location);
+        telemetry.update();
 
         if (location.equals("Center")){
             //first block
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,32.5,1,-1,0);
-            sleep(20000);
-            encoderMecanumDrive(0.9,28,5,0,1);
+
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,-52);
             succ();
             //move to collect block
@@ -77,7 +76,7 @@ public class RedDepotAuto extends BaseAutonomous {
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,8,1,-1,0);
 
-            encoderMecanumDrive(0.9,28,5,0,1);
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,-52);
             succ();
             //move to collect block
@@ -123,7 +122,7 @@ public class RedDepotAuto extends BaseAutonomous {
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,18,1,1,0);
 
-            encoderMecanumDrive(0.9,28,5,0,1);
+            encoderMecanumDrive(0.9,25,5,0,1);
             gyroTurn(0.9,52);
             succ();
             //move to collect block

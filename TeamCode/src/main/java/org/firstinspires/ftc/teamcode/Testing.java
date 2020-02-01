@@ -22,11 +22,11 @@ public class Testing extends BaseAutonomous {
         //Wait for the start button to be pressed
         waitForStart();
 
-        encoderMecanumDrive(0.9,33,5,0,1);
+        encoderMecanumDrive(0.9,35,5,0,1);
         String s = vuforiaJointo(haddi,buddi);
         telemetry.addData("location", s);
         telemetry.update();
-        sleep(1000);
+        sleep(2000);
 
         //gyroTurnAndMove(0.9,-90,0.5,90);
 
