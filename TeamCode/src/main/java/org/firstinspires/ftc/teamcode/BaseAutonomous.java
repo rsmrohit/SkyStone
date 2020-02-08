@@ -102,12 +102,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
         telemetry.update();
-        if (!test) {
-            // make sure the gyro is calibrated before continuing
-            while (robot.realgyro.isCalibrating() /*|| robot.realgyro2.isCalibrating()*/) {
-                sleep(300);
-                idle();
-            }
+
+        // make sure the gyro is calibrated before continuing
+        while (robot.realgyro.isCalibrating()) {
+            sleep(300);
+            idle();
         }
 
         telemetry.addData(">", "haddi ready.");    //
@@ -1056,9 +1055,12 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     public String vuforiaJoint(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
         runtime.reset();
+        com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
 
+        com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","30");
 
-        while (runtime.seconds()<1.5 && !isStopRequested()){
+        while (runtime.seconds()<5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -1075,7 +1077,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
                         }
                         break;
                     }
-                    }
+                }
 
             }
 
@@ -1086,11 +1088,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 if (translation.get(1)/mmPerInch < -4.2){
-                    return "Left";
+
                 } else if (translation.get(1)/mmPerInch < 3.05){
-                    return "Center" ;
+
                 } else {
-                    return "Right";
+
                 }
 
             }

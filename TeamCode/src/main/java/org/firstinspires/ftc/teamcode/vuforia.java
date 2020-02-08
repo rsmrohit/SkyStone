@@ -321,6 +321,11 @@ public class vuforia extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
+
+        com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
+
+        com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","24");
         while (!isStopRequested()) {
 
             // check all the trackable targets to see which one (if any) is visible.
@@ -354,6 +359,7 @@ public class vuforia extends LinearOpMode {
             else {
                 telemetry.addData("Visible Target", "none");
             }
+
             telemetry.update();
         }
 

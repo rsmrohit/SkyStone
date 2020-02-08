@@ -9,6 +9,7 @@ public class ResetEncoders extends BaseAutonomous {
         inithardware(false);
         waitForStart();
         telemetry.addData("horizontal",robot.horizontalSlider.getCurrentPosition());
+        telemetry.update();
 
 
     }

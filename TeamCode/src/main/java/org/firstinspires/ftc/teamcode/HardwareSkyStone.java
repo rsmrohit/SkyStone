@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -32,7 +34,6 @@ public class HardwareSkyStone  {
     public DcMotor horizontal = null;
 
 
-
     public Servo leftclaw = null;
     public Servo rightclaw = null;
 
@@ -45,13 +46,13 @@ public class HardwareSkyStone  {
 
     private boolean test;
 
+    public BNO055IMU imu;
 
     public ModernRoboticsI2cGyro realgyro;
     public ModernRoboticsI2cGyro realgyro2;
 
 
     public static final String TeleOpRunMode = "no encoders";
-
 
 
     /* local OpMode members. */
@@ -69,93 +70,76 @@ public class HardwareSkyStone  {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
-        // Define and Initialize Motors
 
-        //Drive Train motors
         frontLeft = hwMap.get(DcMotor.class, "front_left");
         frontRight = hwMap.get(DcMotor.class, "front_right");
         backRight = hwMap.get(DcMotor.class, "back_right");
         backLeft = hwMap.get(DcMotor.class, "back_left");
-
-        verticalSlider = hwMap.get(DcMotor.class, "vert_slider");
-        horizontalSlider = hwMap.get(DcMotor.class, "horz_slider");
 
         //Define odometry "motors"
         verticalLeft = hwMap.dcMotor.get("front_left");
         verticalRight = hwMap.dcMotor.get("front_right");
         horizontal = hwMap.dcMotor.get("back_right");
 
-
-        spinner = hwMap.get(DcMotor.class, "succ_1");
-        spinner2 = hwMap.get(DcMotor.class,"succ_2");
-        leftclaw = hwMap.get(Servo.class, "left_claw");
-        rightclaw = hwMap.get(Servo.class, "right_claw");
-        clamper = hwMap.get(Servo.class, "clamper");
-        capstone = hwMap.get(Servo.class,"capstone_servo");
+        realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
+        realgyro.calibrate();
 
 
         if (!test) {
-            //Define and Initialize Sensors
-            realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
-            realgyro.calibrate();
+            verticalSlider = hwMap.get(DcMotor.class, "vert_slider");
+            horizontalSlider = hwMap.get(DcMotor.class, "horz_slider");
+
+            spinner = hwMap.get(DcMotor.class, "succ_1");
+            spinner2 = hwMap.get(DcMotor.class,"succ_2");
+            leftclaw = hwMap.get(Servo.class, "left_claw");
+            rightclaw = hwMap.get(Servo.class, "right_claw");
+            clamper = hwMap.get(Servo.class, "clamper");
+            capstone = hwMap.get(Servo.class,"capstone_servo");
+
+            verticalSlider.setDirection(DcMotor.Direction.REVERSE);
+            spinner.setDirection(DcMotor.Direction.REVERSE);
+            spinner2.setDirection(DcMotor.Direction.FORWARD);
+
+            spinner.setPower(0);
+            spinner2.setPower(0);
+            verticalSlider.setPower(0);
+            horizontalSlider.setPower(0);
+
+            rightclaw.setPosition(0.5);
+            leftclaw.setPosition(0.5);
+            clamper.setPosition(0.03);
+            capstone.setPosition(0.2);
 
         }
-
-
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        verticalSlider.setDirection(DcMotor.Direction.REVERSE);
-        spinner.setDirection(DcMotor.Direction.REVERSE);
-        spinner2.setDirection(DcMotor.Direction.FORWARD);
-
-
 
         // Set all motors to zero power
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
         backLeft.setPower(0);
-        spinner.setPower(0);
-        spinner2.setPower(0);
-        verticalSlider.setPower(0);
-        horizontalSlider.setPower(0);
 
 
-        rightclaw.setPosition(0.5);
-        leftclaw.setPosition(0.5);
-        clamper.setPosition(0.03);
-        capstone.setPosition(0.2);
+        realgyro.resetZAxisIntegrator();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        if (!test) {
-            realgyro.resetZAxisIntegrator();
-        }
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
 
     }
     public void setMode(String mode){
@@ -165,43 +149,51 @@ public class HardwareSkyStone  {
             frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+            if (!test){
+                spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            //verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //commenting this out to use the initial horizontal encoder value
-            //horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
 
         }
         else {
 
-            // Reset encoder
-            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-            // set to run using encoder
-            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            if (!test){
+                spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                spinner2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                verticalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                verticalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                horizontalSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
 
         }
     }
