@@ -49,7 +49,7 @@ public class HardwareSkyStone  {
     public BNO055IMU imu;
 
     public ModernRoboticsI2cGyro realgyro;
-    public ModernRoboticsI2cGyro realgyro2;
+
 
 
     public static final String TeleOpRunMode = "no encoders";

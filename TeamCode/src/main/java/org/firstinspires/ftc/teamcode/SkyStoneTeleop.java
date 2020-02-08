@@ -357,8 +357,7 @@ public class SkyStoneTeleop extends OpMode{
         }
 
 
-        telemetry.addData("horizontal",robot.horizontalSlider.getCurrentPosition());
-//        telemetry.addData("vertical", robot.verticalSlider.getCurrentPosition());
+        
         telemetry.update();
 
     }

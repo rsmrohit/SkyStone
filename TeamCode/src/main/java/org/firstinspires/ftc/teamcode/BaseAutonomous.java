@@ -116,10 +116,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
     // NOT USED; gets average gyro value for more accurate angles
     public double getAverageGyro(){
-        /*int sum = robot.realgyro.getIntegratedZValue() + robot.realgyro2.getIntegratedZValue();
-        return sum/2;*/
-        int sum = robot.realgyro.getIntegratedZValue();
-        return sum;
+        return robot.imu.getAngularOrientation().firstAngle;
+
     }
 
 
