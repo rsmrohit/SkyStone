@@ -1085,12 +1085,12 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -4.2){
-
-                } else if (translation.get(1)/mmPerInch < 3.05){
-
+                if (translation.get(1)/mmPerInch < -5.5){
+                    return "Left";
+                } else if (translation.get(1)/mmPerInch < 0.5){
+                    return "Center";
                 } else {
-
+                    return "Right";
                 }
 
             }
