@@ -29,26 +29,64 @@ public class RedDepotAuto extends BaseAutonomous {
             //first block
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,44,1,-1,0);
-
             encoderMecanumDrive(0.9,40,5,0,1);
+            // turn 90 for grabber orientation
             gyroTurn(0.7,-90);
+            //move left to push out the first block
             encoderMecanumDrive(0.9,70,5,-1,0);
+            //start the sucker
             succ();
-            encoderMecanumDrive(0.5,20,5,0,1);
-            encoderMecanumDrive(0.9, 70,5,1,-0.5);
+            //move forward slowly to grab the image block
+            encoderMecanumDrive(0.25,20,5,0,1);
+            // block grabbed - move right and back at the same time
+            encoderMecanumDrive(0.9, 67,5,1,-0.5);
+            // stop the grabber
             succstop();
+            //clamp the block
             robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(0.9, 100,5,0,-1);
-            encoderMecanumDrive(0.6, 71.5,5,-1,-0.2);
+            //changes start here
+            //turn the robot 90 to face the block to the foundation
+            gyroTurn(0.7,175);
+            //stafe the robot to the foundation
+            encoderMecanumDrive(0.9, 170,5,1,0);
+            //drop the block
+            //add drop function instead of sleep
+            //sleep(300);
             bruh();
             robot.clamper.setPosition(0.03);
-            verticalEncoder(500);
-            dumbencoderMecanumDrive(0.6,71.5,5,1,0.2,false);
-            verticalEncoder(0);
-            encoderMecanumDrive(0.9, 157,5,0,1);
-            encoderMecanumDrive(0.9, 45,5,-1,0);
+            // turn back to the grabber facing block position
+            gyroTurn(0.7,-89);
+            // TODO:need to bring back the  horizontal slider
+            // move the robot forward to go pick second block
+            dumbencoderMecanumDrive(0.9, 215,5,0,1,false);
+            //strafe left to knock out the block in front of the image block
+            encoderMecanumDrive(0.6, 47,5,-1,0);
+            //start the sucker
             succ();
-            encoderMecanumDrive(0.5,20,5,0,1);
+            // drive forward to pick up block
+            encoderMecanumDrive(0.25,20,5,0,1);
+
+
+//            encoderMecanumDrive(0.6, 71.5,5,-1,-0.2);
+//            bruh();
+//            robot.clamper.setPosition(0.03);
+//            verticalEncoder(500);
+//            dumbencoderMecanumDrive(0.6,71.5,5,1,0.2,false);
+//            verticalEncoder(0);
+//
+//            encoderMecanumDrive(0.9, 157,5,0,1);
+//            encoderMecanumDrive(0.9, 45.5,5,-1,0);
+//            succ();
+//            encoderMecanumDrive(0.25,20,5,0,1);
+//            encoderMecanumDrive(0.9, 45.5,5,1,0);
+//            encoderMecanumDrive(0.9, 170,5,0,-1);
+//            encoderMecanumDrive(0.6, 71.5,5,-1,-0.2);
+//            bruh();
+//            verticalEncoder(500);
+//            dumbencoderMecanumDrive(0.6,71.5,5,1,0.2,false);
+//            verticalEncoder(0);
+
+
 
 
 //            gyroTurn(0.9,-52);

@@ -21,8 +21,15 @@ public class Testing extends BaseAutonomous {
 //        robot.clamper.setPosition(0.15);
 //
 //        //Wait for the start button to be pressed
-          waitForStart();
-        dumbencoderMecanumDrive(0.9,40,5,-1,1,false);
+        waitForStart();
+
+        encoderMecanumDrive(0.6,100,5,0,1);
+//        telemetry.addData("up","");
+//        telemetry.update();
+//        verticalEncoder(500);
+//        telemetry.addData("down","");
+//        telemetry.update();
+//        verticalEncoder(100);
 
 //
 //        encoderMecanumDrive(0.9,35,5,0,1);
