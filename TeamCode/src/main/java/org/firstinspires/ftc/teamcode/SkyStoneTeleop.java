@@ -365,6 +365,13 @@ public class SkyStoneTeleop extends OpMode{
         telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
         telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
+
+        telemetry.addData("Front Left:", robot.frontLeft.getCurrentPosition());
+        telemetry.addData("Front Right:", robot.frontRight.getCurrentPosition());
+        telemetry.addData("Back Left:", robot.backLeft.getCurrentPosition());
+        telemetry.addData("Back Right:", robot.backRight.getCurrentPosition());
+
+
         telemetry.update();
 
     }
