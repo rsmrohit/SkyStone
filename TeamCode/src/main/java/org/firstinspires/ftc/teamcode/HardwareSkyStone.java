@@ -50,6 +50,8 @@ public class HardwareSkyStone  {
 
     public ModernRoboticsI2cGyro realgyro;
 
+    public static final double wheelCircumfrence = (100*Math.PI/25.4);
+
 
 
     public static final String TeleOpRunMode = "no encoders";

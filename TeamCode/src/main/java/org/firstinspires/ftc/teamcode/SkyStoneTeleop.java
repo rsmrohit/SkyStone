@@ -53,7 +53,7 @@ public class SkyStoneTeleop extends OpMode{
 
 
     // declaring variables
-    final double COUNTS_PER_INCH = 307.699557;
+
 
     float bucketLimiter = 1f;
 
@@ -108,11 +108,9 @@ public class SkyStoneTeleop extends OpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
 
-
-
-
     /* Declare OpMode members. */
     HardwareSkyStone robot       = new HardwareSkyStone(false); // use the class created to define a RoverRuckus's hardware
+    final double COUNTS_PER_INCH = (383.6*2/robot.wheelCircumfrence);
 
 
     /*

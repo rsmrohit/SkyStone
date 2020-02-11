@@ -16,7 +16,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
     HardwareSkyStone robot = null;
 
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
-    final double COUNTS_PER_INCH = 307.699557;
+    final double COUNTS_PER_INCH = (383.6*2/robot.wheelCircumfrence);
 
     @Override
     public void runOpMode() throws InterruptedException {
