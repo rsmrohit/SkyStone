@@ -42,10 +42,10 @@ public class MecanumWheels {
         double rightX = turn;
 
 
-          wheelPowers[FrontLeft] = (r * Math.cos(robotAngle) - rightX)*Math.sqrt(2);
-          wheelPowers[FrontRight] = (r * Math.sin(robotAngle) + rightX)*Math.sqrt(2);
-          wheelPowers[RearLeft] = (r * Math.sin(robotAngle) - rightX)*Math.sqrt(2);
-          wheelPowers[RearRight] = (r * Math.cos(robotAngle) + rightX)*Math.sqrt(2);
+        wheelPowers[FrontLeft] = (r * Math.cos(robotAngle) - rightX)*Math.sqrt(2);
+        wheelPowers[FrontRight] = (r * Math.sin(robotAngle) + rightX)*Math.sqrt(2);
+        wheelPowers[RearLeft] = (r * Math.sin(robotAngle) - rightX)*Math.sqrt(2);
+        wheelPowers[RearRight] = (r * Math.cos(robotAngle) + rightX)*Math.sqrt(2);
 
         // Adjust maximum power from -1.0 to 1.0
         double absMax = 0.0;

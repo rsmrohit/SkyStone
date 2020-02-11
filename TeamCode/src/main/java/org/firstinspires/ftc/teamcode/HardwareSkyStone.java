@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * This is NOT an opmode.
  *
  * This class can be used to define all the specific hardware for a single robot.
- * In this case that robot is a RoverRuckus.
+ * In this case that robot is a bruh.
  *
  */
 public class HardwareSkyStone  {
@@ -144,6 +144,11 @@ public class HardwareSkyStone  {
     }
     public void setMode(String mode){
         if (mode.equals(TeleOpRunMode)){
+
+            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

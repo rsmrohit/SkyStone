@@ -2,11 +2,8 @@ package org.firstinspires.ftc.teamcode.Odometry;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.HardwareSkyStone;
-import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
 
 /**
  * Created by Sarthak on 6/1/2019.
@@ -15,32 +12,24 @@ import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
 @TeleOp(name = "Global Coordinate Position Test", group = "Calibration")
 public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
 
-    //Odometry encoder wheels
-    DcMotor verticalRight, verticalLeft, horizontal;
-    HardwareSkyStone roboto = null;
+
+    HardwareSkyStone robot = null;
 
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
     final double COUNTS_PER_INCH = 307.699557;
 
-    //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
-    String verticalLeftEncoderName = "rf", verticalRightEncoderName = "lf", horizontalEncoderName = "lb";
-
     @Override
     public void runOpMode() throws InterruptedException {
-        roboto = new HardwareSkyStone(true);
-        roboto.init(hardwareMap);
-        roboto.setMode("encoders lmao");
+        robot = new HardwareSkyStone(true);
+        robot.init(hardwareMap);
+        robot.setMode("encoders lmao");
 
 
         //Odometry System Calibration Init Complete
         telemetry.addData("Odometry System Calibration Status", "Init Complete");
         telemetry.update();
 
-//        //Reset the encoders
-//        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//
+
 //        /*
 //        Reverse the direction of the odometry wheels. THIS WILL CHANGE FOR EACH ROBOT. Adjust the direction (as needed) of each encoder wheel
 //        such that when the verticalLeft and verticalRight encoders spin forward, they return positive values, and when the
@@ -67,7 +56,7 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
          */
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(roboto.verticalLeft, roboto.verticalRight, roboto.horizontal, COUNTS_PER_INCH, 75);
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.backLeft, robot.frontRight, robot.frontLeft, robot.backRight, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 

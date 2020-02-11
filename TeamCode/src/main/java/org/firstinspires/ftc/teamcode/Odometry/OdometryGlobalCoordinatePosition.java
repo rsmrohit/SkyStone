@@ -12,26 +12,30 @@ import java.io.File;
  */
 public class OdometryGlobalCoordinatePosition implements Runnable{
     //Odometry wheels
-    private DcMotor verticalEncoderLeft, verticalEncoderRight, horizontalEncoder;
+    private DcMotor verticalEncoderLeft, verticalEncoderRight;
+    private DcMotor horizontalEncoderLeft, horizontalEncoderRight;
+
+    static final double offsetAngle = Math.PI/4;
 
     //Thead run condition
     private boolean isRunning = true;
 
     //Position variables used for storage and calculations
-    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0,  changeInRobotOrientation = 0;
+    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, changeInRobotOrientation = 0;
+    double horizontalRightEncoderWheelPosition = 0, horizontalLeftEncoderWheelPosition = 0;
     private double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
-    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
+    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0;
+    private double previousHorizontalRightEncoderWheelPosition = 0, previousHorizontalLeftEncoderWheelPosition = 0;
 
     //Algorithm constants
     private double robotEncoderWheelDistance;
-    private double horizontalEncoderTickPerDegreeOffset;
+
 
     //Sleep time interval (milliseconds) for the position update thread
     private int sleepTime;
 
     //Files to access the algorithm constants
     private File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
     private int verticalLeftEncoderPositionMultiplier = 1;
     private int verticalRightEncoderPositionMultiplier = 1;
@@ -41,17 +45,17 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
      * Constructor for GlobalCoordinatePosition Thread
      * @param verticalEncoderLeft left odometry encoder, facing the vertical direction
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
-     * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
+     * @param horizontalEncoderRight horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay){
+    public OdometryGlobalCoordinatePosition(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoderLeft, DcMotor horizontalEncoderRight, double COUNTS_PER_INCH, int threadSleepDelay){
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
-        this.horizontalEncoder = horizontalEncoder;
+        this.horizontalEncoderLeft = horizontalEncoderLeft;
+        this.horizontalEncoderRight = horizontalEncoderRight;
         sleepTime = threadSleepDelay;
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
-        this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
 
     }
 
@@ -63,28 +67,39 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
         verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
 
+        horizontalLeftEncoderWheelPosition = horizontalEncoderLeft.getCurrentPosition();
+        horizontalRightEncoderWheelPosition = horizontalEncoderRight.getCurrentPosition();
+
         double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
+
+        double leftChangeHorizontal = horizontalLeftEncoderWheelPosition - previousHorizontalLeftEncoderWheelPosition;
+        double rightChangeHorizontal = horizontalRightEncoderWheelPosition - previousHorizontalRightEncoderWheelPosition;
+
 
         //Calculate Angle
         changeInRobotOrientation = (rightChange - leftChange) / (robotEncoderWheelDistance);
         robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
 
+
+
         //Get the components of the motion
-        normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
-        double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
-        double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
+
 
         double p = ((rightChange + leftChange) / 2);
-        double n = horizontalChange;
+        double n = ((leftChangeHorizontal+rightChangeHorizontal)/2);
 
-        //Calculate and update the position values
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (-p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadians) + n*Math.sin(robotOrientationRadians));
+        robotGlobalYCoordinatePosition += (p*Math.cos(offsetAngle + robotOrientationRadians) + n*Math.cos(offsetAngle-robotOrientationRadians));
+        robotGlobalXCoordinatePosition += (-p*Math.sin(offsetAngle+robotOrientationRadians) + n*Math.sin(offsetAngle-robotOrientationRadians));
+
+        //Code for odometers
+        //robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (-p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
+        //robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadians) + n*Math.sin(robotOrientationRadians));
 
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
-        prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+        previousHorizontalRightEncoderWheelPosition = horizontalRightEncoderWheelPosition;
+        previousHorizontalLeftEncoderWheelPosition = horizontalLeftEncoderWheelPosition;
     }
 
     /**

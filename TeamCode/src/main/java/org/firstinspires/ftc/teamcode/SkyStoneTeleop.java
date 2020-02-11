@@ -34,6 +34,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
+
 import static org.firstinspires.ftc.teamcode.HardwareSkyStone.TeleOpRunMode;
 
 
@@ -51,7 +53,7 @@ public class SkyStoneTeleop extends OpMode{
 
 
     // declaring variables
-
+    final double COUNTS_PER_INCH = 307.699557;
 
     float bucketLimiter = 1f;
 
@@ -97,7 +99,7 @@ public class SkyStoneTeleop extends OpMode{
     static final double     COUNTS_PER_CM         = ((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI));
 
 
-
+    OdometryGlobalCoordinatePosition globalPositionUpdate = null;
 
 
     MecanumDriveTrain vroom;
@@ -182,6 +184,9 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void start() {
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.backLeft, robot.frontRight, robot.frontLeft, robot.backRight, COUNTS_PER_INCH, 75);
+        Thread positionThread = new Thread(globalPositionUpdate);
+        positionThread.start();
     }
 
     /*
@@ -356,8 +361,10 @@ public class SkyStoneTeleop extends OpMode{
             }
         }
 
+        telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+        telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
-        
         telemetry.update();
 
     }
@@ -367,6 +374,7 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void stop() {
+        globalPositionUpdate.stop();
     }
 
     public void startvertlift(){
