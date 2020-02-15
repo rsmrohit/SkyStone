@@ -106,19 +106,19 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
      * Returns the robot's global x coordinate
      * @return global x coordinate
      */
-    public double returnXCoordinate(){ return robotGlobalXCoordinatePosition; }
+    public double getX(){ return robotGlobalXCoordinatePosition; }
 
     /**
      * Returns the robot's global y coordinate
      * @return global y coordinate
      */
-    public double returnYCoordinate(){ return robotGlobalYCoordinatePosition; }
+    public double getY(){ return robotGlobalYCoordinatePosition; }
 
     /**
      * Returns the robot's global orientation
      * @return global orientation, in degrees
      */
-    public double returnOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
+    public double getOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
 
     /**
      * Stops the position update thread
