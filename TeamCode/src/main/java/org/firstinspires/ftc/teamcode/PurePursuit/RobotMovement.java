@@ -109,6 +109,10 @@ public class RobotMovement {
                 }
             }
         }
+        if(nextPointNum==10 && Math.hypot(pathPoints.get(10).x-robotPos.x,pathPoints.get(10).y-robotPos.y) <= followMe.followDistance){
+            followMe.turnSpeed = 0;
+        }
+
         if (nextPointNum==11&& Math.hypot(pathPoints.get(11).x-robotPos.x,pathPoints.get(11).y-robotPos.y) <= followMe.followDistance){
             followMe.setPoint(new Point(robotPos.x,robotPos.y));
         }
