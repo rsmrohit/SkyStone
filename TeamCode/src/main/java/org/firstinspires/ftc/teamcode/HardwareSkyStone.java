@@ -204,4 +204,10 @@ public class HardwareSkyStone  {
 
         }
     }
+    public void updateDriveTrainInputs(MecanumWheels wheels){
+        frontRight.setPower(wheels.getFrontRightPower());
+        frontLeft.setPower(wheels.getFrontLeftPower());
+        backLeft.setPower(wheels.getRearLeftPower());
+        backRight.setPower(wheels.getRearRightPower());
+    }
 }
