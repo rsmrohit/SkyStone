@@ -50,6 +50,7 @@ public class RobotMovement {
     //Finds where the robot is along the path and updates nextPointNum to be the index of the next curve point
     public void updateLocationAlongPath(ArrayList<CurvePoint> allPoints, Point robotPos){
         double shortestDistanceToLine = 100000000;
+        int smallest = 0;
         for (int i = 0; i < allPoints.size()-1;i++){
             double[] dArray = MathFunctions.pointLineIntersection(robotPos,allPoints.get(i),allPoints.get(i+1));
 
@@ -62,16 +63,15 @@ public class RobotMovement {
             double directionDiff = Math.abs(MathFunctions.AngleWrap(robotAngle-lineAngle));
 
 
-            if (dist < shortestDistanceToLine && directionDiff < Math.toRadians(130)){
-
+            if (dist <= shortestDistanceToLine && directionDiff < Math.toRadians(130)){
                 shortestDistanceToLine = dist;
-
-                if (i == nextPointNum){
-                    nextPointNum++;
-
-                }
+                smallest = i;
 
             }
+        }
+
+        if (smallest == nextPointNum){
+            nextPointNum++;
         }
 
     }
@@ -88,9 +88,17 @@ public class RobotMovement {
     public CurvePoint getFollowPointPath(ArrayList<CurvePoint> pathPoints, Point robotPos, double preferredAngle){
 
         CurvePoint followMe = new CurvePoint(pathPoints.get(nextPointNum));
-        //System.out.println("Start point: "+ (nextPointNum-1) + " End Point: "+ (nextPointNum+1));
 
-        for (int i = nextPointNum-1; i < nextPointNum + 1 && i <pathPoints.size()-1;i++){
+        int topBound = nextPointNum+1;
+
+        if (nextPointNum==2 && Math.hypot(pathPoints.get(2).x-robotPos.x,pathPoints.get(2).y-robotPos.y) >= followMe.followDistance){
+            topBound = nextPointNum;
+        }
+        if (nextPointNum==8 && Math.hypot(pathPoints.get(8).x-robotPos.x,pathPoints.get(8).y-robotPos.y) >= followMe.followDistance){
+            topBound = nextPointNum;
+        }
+
+        for (int i = nextPointNum-1; i < topBound && i <pathPoints.size()-1;i++){
             CurvePoint startLine = pathPoints.get(i);
             CurvePoint endLine = pathPoints.get(i+1);
 
@@ -106,6 +114,7 @@ public class RobotMovement {
                 if (deltaAngle < closestAngle){
                     closestAngle = deltaAngle;
                     followMe.setPoint(thisIntersection);
+                    followMe.setCharacteristics(endLine);
                 }
             }
         }
