@@ -108,8 +108,8 @@ public class RobotMovement {
             double closestAngle = 100000000;
             for (Point thisIntersection: intersections){
                 double angle = Math.atan2(thisIntersection.y-robotPos.y,thisIntersection.x-robotPos.x);
-                double relativeAngle = MathFunctions.AngleWrap(angle - (globalPosition.getOrientation() - Math.toRadians(90)));
-                double deltaAngle = Math.abs(MathFunctions.AngleWrap(relativeAngle- preferredAngle));
+                double relativeAngle = MathFunctions.AngleWrap(angle - globalPosition.getOrientation() );
+                double deltaAngle = Math.abs(MathFunctions.AngleWrap(relativeAngle - preferredAngle));
 
                 if (deltaAngle < closestAngle){
                     closestAngle = deltaAngle;
@@ -137,8 +137,7 @@ public class RobotMovement {
         double absoluteAngleToTarget = Math.atan2(y-globalPosition.getY(),x-globalPosition.getX());
 
         //Finds the angle to the target in the xy coordinates of the robot
-        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - (globalPosition.getOrientation() - Math.toRadians(90)));
-
+        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - globalPosition.getOrientation());
 
 
         double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
