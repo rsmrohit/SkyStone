@@ -110,7 +110,7 @@ public class SkyStoneTeleop extends OpMode{
 
     /* Declare OpMode members. */
     HardwareSkyStone robot       = new HardwareSkyStone(false); // use the class created to define a RoverRuckus's hardware
-    final double COUNTS_PER_INCH = (383.6*2/robot.wheelCircumfrence);
+    final double COUNTS_PER_INCH = 307.699557;
 
 
     /*
@@ -182,7 +182,7 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void start() {
-        globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.backLeft, robot.frontRight, robot.frontLeft, robot.backRight, COUNTS_PER_INCH, 75);
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
     }
