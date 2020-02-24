@@ -182,9 +182,9 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void start() {
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
-        Thread positionThread = new Thread(globalPositionUpdate);
-        positionThread.start();
+//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
+//        Thread positionThread = new Thread(globalPositionUpdate);
+//        positionThread.start();
     }
 
     /*
@@ -196,34 +196,33 @@ public class SkyStoneTeleop extends OpMode{
         stopLift(robot.verticalSlider);
         stopLift(robot.horizontalSlider);
 
-        if (gamepad2.right_trigger >=0.2){
+        if (gamepad2.right_trigger >= 0.2) {
             liftLimiter = 0.5;
-        }else{
+        } else {
             liftLimiter = 1;
         }
-
 
 
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
 //            telemetry.addData("bruh","bruh");
             robot.rightclaw.setPosition(0);
             robot.leftclaw.setPosition(1.0);
-        }else if(gamepad1.right_bumper){
+        } else if (gamepad1.right_bumper) {
             robot.rightclaw.setPosition(1.0);
             robot.leftclaw.setPosition(0);
-        } else{
+        } else {
             robot.rightclaw.setPosition(0.5);
             robot.leftclaw.setPosition(0.5);
         }
 
 
-        if (gamepad2.x && !pastCap){
-            if (robot.capstone.getPosition() == 0.2){
+        if (gamepad2.x && !pastCap) {
+            if (robot.capstone.getPosition() == 0.2) {
                 robot.capstone.setPosition(0.53);
-            }else{
+            } else {
                 robot.capstone.setPosition(0.2);
             }
         }
@@ -268,113 +267,128 @@ public class SkyStoneTeleop extends OpMode{
         }
 
 
-
         //Clamper code
-        if (gamepad2.right_bumper) {
-//            telemetry.addData("clamp","initiated");
-//            telemetry.update();
-            robot.clamper.setPosition(0.14);
-        } else if (gamepad2.left_bumper) {
-//            telemetry.addData("clamp","opened");
-//            telemetry.update();
+        //toggle
+        if (gamepad2.right_bumper && !pastStateRbumper) {
+            clamp = !clamp;
+        }
 
+        if (clamp) {
+            robot.clamper.setPosition(0.14);
+        } else if (!clamp) {
             robot.clamper.setPosition(0.03);
         }
 
+            pastStateRbumper = gamepad2.right_bumper;
 
-        if (gamepad2.b && !pastStateB){
-            bPresses++;
-            runtime.reset();
-        }
-        pastStateB = gamepad2.b;
+//            telemetry.addData("clamp","initiated");
+//            telemetry.update();
+//            robot.clamper.setPosition(0.14);
+//        } else if (gamepad2.left_bumper) {
+////            telemetry.addData("clamp","opened");
+////            telemetry.update();
+//
+//            robot.clamper.setPosition(0.03);
+//        }
 
-        if (runtime.seconds()>0.3){
-            if (bPresses!=0){
-                startvertlift();
+
+            if (gamepad2.b && !pastStateB) {
+                bPresses++;
+                runtime.reset();
             }
-            bPresses = 0;
-        }
+            pastStateB = gamepad2.b;
 
-
-        if(!autolifting){
-            if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50 ) {
-
-                stopped = false;
-
-                robot.verticalSlider.setTargetPosition(-50);
-                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y*liftLimiter));
-
-            } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 15000){
-                stopped = false;
-
-                robot.verticalSlider.setTargetPosition(15000);
-                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y*liftLimiter));
-
-            } else {
-
-
-                if (!stopped){
-                    stoptarget = robot.verticalSlider.getCurrentPosition();
+            if (runtime.seconds() > 0.3) {
+                if (bPresses != 0) {
+                    startvertlift();
                 }
-                stopped = true;
-                robot.verticalSlider.setTargetPosition(stoptarget);
-                robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                robot.verticalSlider.setPower(0.5);
-
-
+                bPresses = 0;
             }
 
-        }
 
-        if (gamepad2.dpad_left && !horilifting){
-            startLift(1.0,0,robot.horizontalSlider);
-        }
+            if (!autolifting) {
+                if (gamepad2.left_stick_y > 0.2 && robot.verticalSlider.getCurrentPosition() > -50) {
 
-        if (!horilifting){
+                    stopped = false;
 
-            if (-gamepad2.right_stick_y > 0 ){
+                    robot.verticalSlider.setTargetPosition(-50);
+                    robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y * liftLimiter));
+
+                } else if (gamepad2.left_stick_y < -0.2 && robot.verticalSlider.getCurrentPosition() < 15000) {
+                    stopped = false;
+
+                    robot.verticalSlider.setTargetPosition(15000);
+                    robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.verticalSlider.setPower(Math.abs(gamepad2.left_stick_y * liftLimiter));
+
+                } else {
 
 
-                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
-                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if (!stopped) {
+                        stoptarget = robot.verticalSlider.getCurrentPosition();
+                    }
+                    stopped = true;
+                    robot.verticalSlider.setTargetPosition(stoptarget);
+                    robot.verticalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.verticalSlider.setPower(0.5);
+
+
                 }
 
-                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
-
-            } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > -150 ){
-
-                robot.horizontalSlider.setTargetPosition(-150);
-                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
-
-            } else {
-
-                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)){
-                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
-                robot.horizontalSlider.setPower(0);
             }
+
+            if (gamepad2.dpad_left && !horilifting) {
+                startLift(1.0, 0, robot.horizontalSlider);
+            }
+
+            if (!horilifting) {
+
+                if (-gamepad2.right_stick_y > 0) {
+
+
+                    if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+                        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
+
+                    robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
+
+                } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > -150) {
+
+                    robot.horizontalSlider.setTargetPosition(-150);
+                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
+
+                } else {
+
+                    if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+                        robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
+                    robot.horizontalSlider.setPower(0);
+                }
+            }
+
+            telemetry.addData("Horizontal", robot.horizontalSlider.getCurrentPosition());
+            telemetry.addData("Vertical", robot.verticalSlider.getCurrentPosition());
+
+
+//        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
+//        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
+//        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
+
+
+            telemetry.update();
+
         }
 
-        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
-        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
-        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
-
-
-
-        telemetry.update();
-
-    }
 
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
     public void stop() {
-        globalPositionUpdate.stop();
+        //globalPositionUpdate.stop();
     }
 
     public void startvertlift(){
