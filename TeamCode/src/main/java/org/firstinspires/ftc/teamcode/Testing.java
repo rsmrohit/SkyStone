@@ -16,12 +16,13 @@ public class Testing extends BaseAutonomous {
     public static double[] followAngles = {Math.toRadians(0),Math.toRadians(0),Math.toRadians(0), Math.toRadians(-180), Math.toRadians(-180), Math.toRadians(-90), Math.toRadians(0),
             Math.toRadians(0), Math.toRadians(0), Math.toRadians(-180),Math.toRadians(-180),Math.toRadians(0)};
     final double COUNTS_PER_INCH = (383.6*2/robot.wheelCircumfrence);
-    OdometryGlobalCoordinatePosition g = new OdometryGlobalCoordinatePosition(robot.backLeft, robot.frontRight, robot.frontLeft, robot.backRight, COUNTS_PER_INCH, 75);
 
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        inithardware(false);
+        OdometryGlobalCoordinatePosition g = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(g);
         positionThread.start();
         r = new RobotMovement(g,robot);
