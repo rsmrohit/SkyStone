@@ -19,8 +19,8 @@ public class RobotMovement {
     HardwareSkyStone robot = null;
 
 
-    public double pastX;
-    public double pastY;
+    public double pastX = 0;
+    public double pastY = 0;
 
     public double xVelocity = 0;
     public double yVelocity = 0;
@@ -51,7 +51,7 @@ public class RobotMovement {
     public void updateLocationAlongPath(ArrayList<CurvePoint> allPoints, Point robotPos){
         double shortestDistanceToLine = 100000000;
         int smallest = 0;
-        for (int i = 0; i < allPoints.size()-1;i++){
+        for (int i = nextPointNum-1; i < allPoints.size()-1 && i < nextPointNum+5;i++){
             double[] dArray = MathFunctions.pointLineIntersection(robotPos,allPoints.get(i),allPoints.get(i+1));
 
             double dist = dArray[0];
@@ -74,6 +74,14 @@ public class RobotMovement {
             nextPointNum++;
         }
 
+        if (nextPointNum==7&&Math.hypot(allPoints.get(7).x-robotPos.x,allPoints.get(7).y-robotPos.y) <=25 ){
+            nextPointNum++;
+        }
+
+        if (nextPointNum==12 && Math.hypot(allPoints.get(12).x-robotPos.x,allPoints.get(12).y-robotPos.y) < 25){
+            nextPointNum++;
+        }
+
     }
 
     //Updates the x and y velocities of the robot and the past position
@@ -89,12 +97,17 @@ public class RobotMovement {
 
         CurvePoint followMe = new CurvePoint(pathPoints.get(nextPointNum));
 
-        int topBound = nextPointNum+1;
+        int topBound = nextPointNum+2;
 
         if (nextPointNum==2 && Math.hypot(pathPoints.get(2).x-robotPos.x,pathPoints.get(2).y-robotPos.y) >= followMe.followDistance){
             topBound = nextPointNum;
         }
-        if (nextPointNum==8 && Math.hypot(pathPoints.get(8).x-robotPos.x,pathPoints.get(8).y-robotPos.y) >= followMe.followDistance){
+
+        if (nextPointNum==11){
+            topBound = nextPointNum+1;
+        }
+
+        if (nextPointNum==12 && Math.hypot(pathPoints.get(12).x-robotPos.x,pathPoints.get(12).y-robotPos.y) >= followMe.followDistance){
             topBound = nextPointNum;
         }
 
@@ -118,13 +131,13 @@ public class RobotMovement {
                 }
             }
         }
-        if(nextPointNum==10 && Math.hypot(pathPoints.get(10).x-robotPos.x,pathPoints.get(10).y-robotPos.y) <= followMe.followDistance){
+        if (nextPointNum==15 && Math.hypot(robotPos.x-pathPoints.get(15).x,robotPos.y-pathPoints.get(15).y) <= followMe.followDistance){
+            followMe.setPoint(robotPos);
+        }
+        if (nextPointNum==14 && Math.hypot(robotPos.x-pathPoints.get(nextPointNum).x,robotPos.y-pathPoints.get(nextPointNum).y) < followMe.followDistance){
             followMe.turnSpeed = 0;
         }
 
-        if (nextPointNum==11&& Math.hypot(pathPoints.get(11).x-robotPos.x,pathPoints.get(11).y-robotPos.y) <= followMe.followDistance){
-            followMe.setPoint(new Point(robotPos.x,robotPos.y));
-        }
         return followMe;
     }
 
@@ -143,8 +156,9 @@ public class RobotMovement {
         double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
         double relativeYtoPoint = Math.sin(relativeAngle)*distanceToTarget;
 
-        double movementXPower = relativeXtoPoint/(Math.abs(relativeXtoPoint) + Math.abs(relativeYtoPoint));
-        double movementYPower = relativeYtoPoint/(Math.abs(relativeXtoPoint) + Math.abs(relativeYtoPoint));
+        double magnitude = Math.hypot(relativeXtoPoint,relativeYtoPoint);
+        double movementXPower = relativeXtoPoint/magnitude;
+        double movementYPower = relativeYtoPoint/magnitude;
 
         double movement_x, movement_y, movement_turn;
 
@@ -154,12 +168,12 @@ public class RobotMovement {
 
         double relativeTurnAngle = relativeAngle - preferedAngle;
 
-        if (relativeTurnAngle > slowDownTurnRadians){
+        if (Math.abs(relativeTurnAngle) > slowDownTurnRadians){
             movement_y*=slowDownAmount;
             movement_x*=slowDownAmount;
         }
 
-        if (distanceToTarget>=20){
+        if (distanceToTarget>=10){
             movement_turn = Range.clip(relativeTurnAngle/Math.toRadians(30),-1,1)* turnSpeed;
         }else{
             movement_turn = 0;

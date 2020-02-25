@@ -9,6 +9,8 @@ import static java.lang.Math.sqrt;
 
 public class MathFunctions {
 
+    public static boolean debug = false;
+
     public static double AngleWrap(double angle){
         while(angle < -Math.PI){
             angle+= 2*Math.PI;
@@ -127,7 +129,14 @@ public class MathFunctions {
             ret[0] = 1000000;
             ret[1] = 1000000;
             ret[2] = 1000000;
+            if (debug){
+                System.out.println("Robot Pos:"+ robotPos.x + ", " + robotPos.y);
+                System.out.println("Curve Point 1:" + startLine.x+ ", " + startLine.y);
+                System.out.println("Curve Point 2:"+ endLine.x + ", " + endLine.y);
+            }
+
         }
+
 
         return ret;
 
