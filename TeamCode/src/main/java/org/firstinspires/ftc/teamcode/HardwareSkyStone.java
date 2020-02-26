@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -48,7 +48,7 @@ public class HardwareSkyStone  {
 
     public BNO055IMU imu;
 
-    public ModernRoboticsI2cGyro realgyro;
+
 
     public static final double wheelCircumfrence = (100*Math.PI/25.4);
 
@@ -83,8 +83,7 @@ public class HardwareSkyStone  {
         verticalRight = hwMap.dcMotor.get("front_right");
         horizontal = hwMap.dcMotor.get("back_right");
 
-        realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
-        realgyro.calibrate();
+
 
 
         if (!test) {
@@ -127,7 +126,7 @@ public class HardwareSkyStone  {
         backLeft.setPower(0);
 
 
-        realgyro.resetZAxisIntegrator();
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
