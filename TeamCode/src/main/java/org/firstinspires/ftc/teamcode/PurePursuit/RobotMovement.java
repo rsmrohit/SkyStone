@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.PurePursuit;
 import org.firstinspires.ftc.teamcode.HardwareSkyStone;
 import org.firstinspires.ftc.teamcode.MecanumWheels;
 import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
+import org.firstinspires.ftc.teamcode.Odometry.UpdateBoi;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class RobotMovement {
 
     MecanumWheels w = new MecanumWheels();
 
-    public OdometryGlobalCoordinatePosition globalPosition = null;
+    public UpdateBoi updateBoi = null;
     HardwareSkyStone robot = null;
 
 
@@ -25,11 +26,15 @@ public class RobotMovement {
     public double xVelocity = 0;
     public double yVelocity = 0;
 
-    public RobotMovement(OdometryGlobalCoordinatePosition g, HardwareSkyStone h){
-        globalPosition = g;
+    public double movex;
+    public double movey;
+    public double moveturn;
+
+    public RobotMovement(UpdateBoi u, HardwareSkyStone h){
+        updateBoi = u;
         robot = h;
-        pastX = g.getX();
-        pastY = g.getY();
+        pastX = u.getX();
+        pastY = u.getY();
     }
 
 
@@ -38,10 +43,10 @@ public class RobotMovement {
 
         updateVelocity();
 
-        updateLocationAlongPath(allPoints, new Point(globalPosition.getX(), globalPosition.getY()));
+        updateLocationAlongPath(allPoints, new Point(updateBoi.getX(), updateBoi.getY()));
 
 
-        CurvePoint followMe = getFollowPointPath(allPoints, new Point(globalPosition.getX(), globalPosition.getY()), followAngles[nextPointNum]);
+        CurvePoint followMe = getFollowPointPath(allPoints, new Point(updateBoi.getX(), updateBoi.getY()), followAngles[nextPointNum]);
 
 
         goToPosition(followMe.x,followMe.y, followMe.moveSpeed, followAngles[nextPointNum], followMe.turnSpeed,followMe.slowDownTurnRadians,followMe.slowDownTurnAmount);
@@ -86,10 +91,10 @@ public class RobotMovement {
 
     //Updates the x and y velocities of the robot and the past position
     public void updateVelocity(){
-        xVelocity = globalPosition.getX() - pastX;
-        yVelocity = globalPosition.getY() - pastY;
-        pastX = globalPosition.getX();
-        pastY = globalPosition.getY();
+        xVelocity = updateBoi.getX() - pastX;
+        yVelocity = updateBoi.getY() - pastY;
+        pastX = updateBoi.getX();
+        pastY = updateBoi.getY();
     }
 
 
@@ -121,7 +126,7 @@ public class RobotMovement {
             double closestAngle = 100000000;
             for (Point thisIntersection: intersections){
                 double angle = Math.atan2(thisIntersection.y-robotPos.y,thisIntersection.x-robotPos.x);
-                double relativeAngle = MathFunctions.AngleWrap(angle - globalPosition.getOrientation() );
+                double relativeAngle = MathFunctions.AngleWrap(angle - updateBoi.getOrientation() );
                 double deltaAngle = Math.abs(MathFunctions.AngleWrap(relativeAngle - preferredAngle));
 
                 if (deltaAngle < closestAngle){
@@ -144,13 +149,13 @@ public class RobotMovement {
 
     public void goToPosition(double x, double y, double movementSpeed, double preferedAngle, double turnSpeed, double slowDownTurnRadians, double slowDownAmount){
 
-        double distanceToTarget = Math.hypot(x-globalPosition.getX(),y-globalPosition.getY());
+        double distanceToTarget = Math.hypot(x-updateBoi.getX(),y-updateBoi.getY());
 
         //Finds the angle to the target in the absolute xy coordinates of the map
-        double absoluteAngleToTarget = Math.atan2(y-globalPosition.getY(),x-globalPosition.getX());
+        double absoluteAngleToTarget = Math.atan2(y-updateBoi.getY(),x-updateBoi.getX());
 
         //Finds the angle to the target in the xy coordinates of the robot
-        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - globalPosition.getOrientation());
+        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - updateBoi.getOrientation());
 
 
         double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
@@ -178,7 +183,12 @@ public class RobotMovement {
         }else{
             movement_turn = 0;
         }
+
+
         w.UpdateInput(movement_x,movement_y,movement_turn);
+        movex = movement_x;
+        movey = movement_y;
+        moveturn = movement_turn;
         robot.updateDriveTrainInputs(w);
 
 

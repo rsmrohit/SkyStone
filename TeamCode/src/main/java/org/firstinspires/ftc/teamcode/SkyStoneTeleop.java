@@ -89,6 +89,8 @@ public class SkyStoneTeleop extends OpMode{
 
     int bin;
     int liftTarget;
+    int delta[] = new int[3];
+    int past[] = new int[3];
 
 
     Integer gyroAngle;
@@ -166,6 +168,13 @@ public class SkyStoneTeleop extends OpMode{
         telemetry.addData("Teleop", "Initialized");
 
         telemetry.update();
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
+        Thread positionThread = new Thread(globalPositionUpdate);
+        positionThread.start();
+        for (int i =0;i<3;i++){
+            past[i] = 0;
+            delta[i] = 0;
+        }
 
 
     }
@@ -182,9 +191,7 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void start() {
-//        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, 75);
-//        Thread positionThread = new Thread(globalPositionUpdate);
-//        positionThread.start();
+
     }
 
     /*
@@ -369,16 +376,35 @@ public class SkyStoneTeleop extends OpMode{
                 }
             }
 
-            telemetry.addData("Horizontal", robot.horizontalSlider.getCurrentPosition());
-            telemetry.addData("Vertical", robot.verticalSlider.getCurrentPosition());
 
 
-//        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
-//        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
-//        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
+            if (gamepad1.a){
+                past[0] = robot.verticalLeft.getCurrentPosition();
+                past[1] = robot.verticalRight.getCurrentPosition();
+                past[2] = robot.horizontal.getCurrentPosition();
+            }
 
 
-            telemetry.update();
+        delta[0] = robot.verticalLeft.getCurrentPosition() - past[0];
+        delta[1] = robot.verticalRight.getCurrentPosition() - past[1];
+
+
+        delta[2] = robot.horizontal.getCurrentPosition() - past[2];
+
+
+
+
+
+        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
+        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
+        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
+        telemetry.addData("Imu", robot.imu.getAngularOrientation().firstAngle);
+
+//        telemetry.addData("vertical LEft", delta[0]);
+//        telemetry.addData("vertical right", delta[1]);
+//        telemetry.addData("horizontal", delta[2]);
+
+        telemetry.update();
 
         }
 
@@ -388,7 +414,7 @@ public class SkyStoneTeleop extends OpMode{
      */
     @Override
     public void stop() {
-        //globalPositionUpdate.stop();
+        globalPositionUpdate.stop();
     }
 
     public void startvertlift(){

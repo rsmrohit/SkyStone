@@ -97,17 +97,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         robot = new HardwareSkyStone(test);
         robot.init(hardwareMap);
-        initVuforia();
+        //initVuforia();
         robot.setMode("encoders lmao");
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
-        telemetry.update();
-
-        // make sure the gyro is calibrated before continuing
-        while (robot.realgyro.isCalibrating()) {
-            sleep(300);
-            idle();
-        }
 
         telemetry.addData(">", "haddi ready.");    //
         telemetry.update();
@@ -473,7 +464,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             leftSpeed   = -rightSpeed;
         }
 
-        double delta = robot.realgyro.getIntegratedZValue()-intendedDirection;
+        double delta = robot.imu.getAngularOrientation().firstAngle-intendedDirection;
         double deltaRad = delta*Math.PI/180;
         double x = ratio*Math.sin(deltaRad);
         double y = ratio*Math.cos(deltaRad);

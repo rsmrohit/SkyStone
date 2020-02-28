@@ -13,7 +13,7 @@ public class DisplayEncoderValues extends BaseAutonomous {
             telemetry.addData("vertical left", robot.verticalLeft.getCurrentPosition());
             telemetry.addData("vertical right", robot.verticalRight.getCurrentPosition());
             telemetry.addData("horizontal", robot.horizontal.getCurrentPosition());
-
+            telemetry.update();
         }
 
     }

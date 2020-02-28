@@ -80,9 +80,8 @@ public class HardwareSkyStone  {
 
         //Define odometry "motors"
         verticalLeft = hwMap.dcMotor.get("front_left");
-        verticalRight = hwMap.dcMotor.get("front_right");
-        horizontal = hwMap.dcMotor.get("back_right");
-
+        verticalRight = hwMap.dcMotor.get("back_right");
+        horizontal = hwMap.dcMotor.get("front_right");
 
 
 

@@ -109,8 +109,7 @@ public class RedDepotAuto extends BaseAutonomous {
             robot.clamper.setPosition(0.15);
             //turn towards foundation
             gyroTurn(0.9,-85);
-            telemetry.addData("angle", robot.realgyro.getIntegratedZValue());
-            telemetry.update();
+
             encoderMecanumDrive(1,108,10,0,-1);
             //move to foundation
             bruh();
