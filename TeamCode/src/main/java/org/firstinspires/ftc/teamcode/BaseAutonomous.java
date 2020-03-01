@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.Odometry.UpdateBoi;
+import org.firstinspires.ftc.teamcode.PurePursuit.MathFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +48,15 @@ public abstract class BaseAutonomous extends LinearOpMode {
     static final double     P_DRIVE_COEFF           = 0.03;
     static final double     CORRECTION              = Math.sqrt(2);
 
+    final double COUNTS_PER_INCH = 307.699557;
+
     private TFObjectDetector tfod;
     boolean dumbdriving;
 
     public VuforiaTrackables haddi;
     public List<VuforiaTrackable> buddi;
+
+    public UpdateBoi updateBoi;
 
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
@@ -99,6 +105,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.init(hardwareMap);
         //initVuforia();
         robot.setMode("encoders lmao");
+        UpdateBoi u = new UpdateBoi(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, robot.imu);
 
         telemetry.addData(">", "haddi ready.");    //
         telemetry.update();
@@ -112,131 +119,65 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
 
-    // Only for mecanum drive; uses gyro to move robot at a specific angle and distance (cm)
-    public void gyroMecanumDrive ( double speed, double distance, double angle) {
+    public void goToPosition(double x, double y, double movementSpeed, double accelerateDistance, double preferedAngle, double turnSpeed, double slowDownTurnRadians, double slowDownAmount){
 
-        int     newFrontLeftTarget;
-        int     newFrontRightTarget;
-        int     newBackLeftTarget;
-        int     newBackRightTarget;
+        double distanceToTarget = Math.hypot(x-updateBoi.getX(),y-updateBoi.getY());
+        double initialD = distanceToTarget;
+        MecanumWheels w = new MecanumWheels();
+        double acceleration = (movementSpeed*movementSpeed)/(2*accelerateDistance);
+        double multiplier = 0;
+        double pastTime = runtime.seconds();
+        while (distanceToTarget > 4*COUNTS_PER_INCH){
+            updateBoi.globalCoordinatePositionUpdate();
+            distanceToTarget =  Math.hypot(x-updateBoi.getX(),y-updateBoi.getY());
+            //Finds the angle to the target in the absolute xy coordinates of the map
+            double absoluteAngleToTarget = Math.atan2(y-updateBoi.getY(),x-updateBoi.getX());
 
-        int     moveCounts;
-        double  targetAvg;
-        double  currentAvg;
-        double  initialAvg;
-        double  remainingCounts;
-        double  countsTraveled;
-        double  factor;
+            //Finds the angle to the target in the xy coordinates of the robot
+            double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - updateBoi.getOrientation() );
 
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+            double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
+            double relativeYtoPoint = Math.sin(relativeAngle)*distanceToTarget;
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            factor = 1;
-            moveCounts = (int)(distance * COUNTS_PER_CM);
-            newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + moveCounts;
-            newFrontRightTarget = robot.frontRight.getCurrentPosition() + moveCounts;
-            newBackLeftTarget = robot.backLeft.getCurrentPosition() + moveCounts;
-            newBackRightTarget = robot.backRight.getCurrentPosition() + moveCounts;
-            targetAvg = (newBackLeftTarget + newBackRightTarget + newFrontLeftTarget + newFrontRightTarget)/4;
-            currentAvg = (robot.frontLeft.getCurrentPosition()+robot.frontRight.getCurrentPosition()+ robot.backLeft.getCurrentPosition()+robot.backRight.getCurrentPosition())/4 ;
-            initialAvg = currentAvg;
-
-            // Set Target and Turn On RUN_TO_POSITION
-            robot.frontLeft.setTargetPosition(newFrontLeftTarget);
-            robot.frontRight.setTargetPosition(newFrontRightTarget);
-            robot.backRight.setTargetPosition(newBackRightTarget);
-            robot.backLeft.setTargetPosition(newBackLeftTarget);
-
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            if (initialD-distanceToTarget < accelerateDistance && multiplier < movementSpeed){
+                multiplier+= acceleration*(runtime.seconds()-pastTime);
+            }
+            pastTime = runtime.seconds();
 
 
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robot.frontLeft.setPower(speed);
-            robot.frontRight.setPower(speed);
-            robot.backRight.setPower(speed);
-            robot.backLeft.setPower(speed);
+            double magnitude = Math.hypot(relativeXtoPoint,relativeYtoPoint);
+            double movementXPower = relativeXtoPoint/magnitude;
+            double movementYPower = relativeYtoPoint/magnitude;
+
+            double movement_x, movement_y, movement_turn;
 
 
-            // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy())  ) {
-
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-                currentAvg = (robot.frontLeft.getCurrentPosition()+robot.frontRight.getCurrentPosition() + robot.backLeft.getCurrentPosition() + robot.backRight.getCurrentPosition())/4 ;
-                remainingCounts = targetAvg - currentAvg;
-                countsTraveled = currentAvg - initialAvg;
+            movement_x = movementXPower * multiplier;
+            movement_y = movementYPower * multiplier;
 
 
-                if (countsTraveled < ACCELERATING_DISTANCE_COUNTS) {
-                    factor = (countsTraveled * (1.0/ACCELERATING_DISTANCE_COUNTS)) + 0.1;
-                    leftSpeed *= factor;
-                    rightSpeed *= factor;
-                    telemetry.addData("factor happened",leftSpeed);
-                    telemetry.update();
-                }
+            double relativeTurnAngle = relativeAngle - preferedAngle;
 
-                if (remainingCounts <= BRAKING_DISTANCE_COUNTS) {
-                    factor = remainingCounts * (1.0/BRAKING_DISTANCE_COUNTS);
-                    leftSpeed *= factor;
-                    rightSpeed *= factor;
-                    telemetry.addData("factor happened",leftSpeed);
-                    telemetry.update();
-                }
-
-
-                robot.frontLeft.setPower(leftSpeed);
-                robot.frontRight.setPower(rightSpeed);
-
-
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.addData("TargetAvg",targetAvg);
-                telemetry.addData("CurrentAvg",currentAvg);
-                telemetry.addData("factor",factor);
-
-
-
-                telemetry.update();
+            if (Math.abs(relativeTurnAngle) > slowDownTurnRadians){
+                movement_y*=slowDownAmount;
+                movement_x*=slowDownAmount;
             }
 
-            // Stop all motion;
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
+            if (distanceToTarget>=10){
+                movement_turn = org.firstinspires.ftc.teamcode.PurePursuit.Range.clip(relativeTurnAngle/slowDownTurnRadians,-1,1)* turnSpeed;
+            }else{
+                movement_turn = 0;
+            }
 
 
+            w.UpdateInput(movement_x,movement_y,movement_turn);
 
-            // Turn off RUN_TO_POSITION
-            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.updateDriveTrainInputs(w);
+
         }
-    }
+        robot.updateDriveTrainInputs(0,0,0,0);
 
+    }
 
 
     // checks to make sure that all motors which should be running are running
