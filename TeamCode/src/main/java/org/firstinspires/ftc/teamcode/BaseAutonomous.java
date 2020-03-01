@@ -139,14 +139,20 @@ public abstract class BaseAutonomous extends LinearOpMode {
             double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
             double relativeYtoPoint = Math.sin(relativeAngle)*distanceToTarget;
 
+
+            //Comment out these lines are replace the multiplier down below with movement speeed if you don't want acceleration/deceleration
             if (initialD-distanceToTarget < accelerateDistance && multiplier < movementSpeed){
                 multiplier+= acceleration*(runtime.seconds()-pastTime);
-            }
-
-            if (distanceToTarget < accelerateDistance && multiplier > 0){
+            }else if (distanceToTarget < (accelerateDistance + 4*COUNTS_PER_INCH) && multiplier > 0){
                 multiplier-= acceleration*(runtime.seconds()-pastTime);
+            } else {
+                telemetry.addData("top speed", multiplier);
+                telemetry.update();
             }
             pastTime = runtime.seconds();
+
+
+
 
             double magnitude = Math.hypot(relativeXtoPoint,relativeYtoPoint);
             double movementXPower = relativeXtoPoint/magnitude;
