@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Odometry;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.PurePursuit.MathFunctions;
 
 import java.io.File;
 
@@ -26,7 +28,8 @@ public class UpdateBoi{
     private double robotEncoderWheelDistance;
     private double horizontalEncoderTickPerDegreeOffset;
 
-    //Sleep time interval (milliseconds) for the position update thread
+
+    BNO055IMU myimu;
 
 
     //Files to access the algorithm constants
@@ -37,17 +40,19 @@ public class UpdateBoi{
     private int verticalRightEncoderPositionMultiplier = 1;
     private int normalEncoderPositionMultiplier = 1;
 
+    int loopcount = 0;
+
     /**
      * Constructor for GlobalCoordinatePosition Thread
      * @param verticalEncoderLeft left odometry encoder, facing the vertical direction
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      */
-    public UpdateBoi(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH){
+    public UpdateBoi(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, BNO055IMU imu){
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
-
+        myimu = imu;
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
@@ -58,6 +63,7 @@ public class UpdateBoi{
      * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
      */
     public void globalCoordinatePositionUpdate(){
+
         //Get Current Positions
         verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
         verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
@@ -84,6 +90,13 @@ public class UpdateBoi{
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
+
+        if (loopcount %10000 ==0){
+            //robotOrientationRadians = myimu.getAngularOrientation().firstAngle;
+            loopcount/=10000;
+        }else{
+            loopcount++;
+        }
     }
 
     /**
@@ -102,7 +115,7 @@ public class UpdateBoi{
      * Returns the robot's global orientation
      * @return global orientation, in degrees
      */
-    public double getOrientation(){ return Math.toDegrees(robotOrientationRadians) % 360; }
+    public double getOrientation(){ return MathFunctions.AngleWrap(robotOrientationRadians) ; }
 
     /**
      * Stops the position update thread

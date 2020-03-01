@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.PurePursuit;
 
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.HardwareSkyStone;
 import org.firstinspires.ftc.teamcode.MecanumWheels;
-import org.firstinspires.ftc.teamcode.Odometry.OdometryGlobalCoordinatePosition;
 import org.firstinspires.ftc.teamcode.Odometry.UpdateBoi;
 
 import java.util.ArrayList;
@@ -19,6 +20,10 @@ public class RobotMovement {
     public UpdateBoi updateBoi = null;
     HardwareSkyStone robot = null;
 
+    boolean f = false;
+    ElapsedTime elapsedTime = new ElapsedTime();
+    double pastTime = elapsedTime.seconds();
+
 
     public double pastX = 0;
     public double pastY = 0;
@@ -26,15 +31,14 @@ public class RobotMovement {
     public double xVelocity = 0;
     public double yVelocity = 0;
 
-    public double movex;
-    public double movey;
-    public double moveturn;
+    public Telemetry telemetry;
 
-    public RobotMovement(UpdateBoi u, HardwareSkyStone h){
+    public RobotMovement(UpdateBoi u, HardwareSkyStone h, Telemetry t){
         updateBoi = u;
         robot = h;
         pastX = u.getX();
         pastY = u.getY();
+        telemetry = t;
     }
 
 
@@ -56,7 +60,7 @@ public class RobotMovement {
     public void updateLocationAlongPath(ArrayList<CurvePoint> allPoints, Point robotPos){
         double shortestDistanceToLine = 100000000;
         int smallest = 0;
-        for (int i = nextPointNum-1; i < allPoints.size()-1 && i < nextPointNum+5;i++){
+        for (int i = (nextPointNum-1); i < allPoints.size()-1 && i < nextPointNum+5;i++){
             double[] dArray = MathFunctions.pointLineIntersection(robotPos,allPoints.get(i),allPoints.get(i+1));
 
             double dist = dArray[0];
@@ -68,33 +72,53 @@ public class RobotMovement {
             double directionDiff = Math.abs(MathFunctions.AngleWrap(robotAngle-lineAngle));
 
 
+
             if (dist <= shortestDistanceToLine && directionDiff < Math.toRadians(130)){
                 shortestDistanceToLine = dist;
                 smallest = i;
 
             }
+
+        }
+
+        if (smallest ==3 && !f){
+
+            f = true;
         }
 
         if (smallest == nextPointNum){
             nextPointNum++;
+            telemetry.addData("dist past","%.3f",MathFunctions.pointLineIntersection(robotPos,allPoints.get(smallest-1),allPoints.get(smallest))[0]);
+            telemetry.addData("dist 4","%.3f",MathFunctions.pointLineIntersection(robotPos,allPoints.get(smallest),allPoints.get(nextPointNum))[0]);
+            double line = Math.atan2(allPoints.get(smallest).y-allPoints.get(smallest-1).y,allPoints.get(smallest).x-allPoints.get(smallest-1).x);
+
+            telemetry.addData("line angle", line);
+            telemetry.addData("robot angle",Math.atan2(yVelocity,xVelocity));
+
+            telemetry.update();
         }
 
-        if (nextPointNum==7&&Math.hypot(allPoints.get(7).x-robotPos.x,allPoints.get(7).y-robotPos.y) <=25 ){
-            nextPointNum++;
-        }
 
-        if (nextPointNum==12 && Math.hypot(allPoints.get(12).x-robotPos.x,allPoints.get(12).y-robotPos.y) < 25){
-            nextPointNum++;
-        }
 
     }
 
     //Updates the x and y velocities of the robot and the past position
     public void updateVelocity(){
-        xVelocity = updateBoi.getX() - pastX;
-        yVelocity = updateBoi.getY() - pastY;
+        double delta = elapsedTime.seconds()-pastTime;
+
+        xVelocity = (updateBoi.getX() - pastX)/delta;
+        yVelocity = (updateBoi.getY() - pastY)/delta;
+        if (Math.abs(xVelocity)<10){
+            xVelocity=0;
+        }
+        if (Math.abs(yVelocity)<10){
+            yVelocity=0;
+        }
+
         pastX = updateBoi.getX();
         pastY = updateBoi.getY();
+        pastTime = elapsedTime.seconds();
+
     }
 
 
@@ -104,17 +128,7 @@ public class RobotMovement {
 
         int topBound = nextPointNum+2;
 
-        if (nextPointNum==2 && Math.hypot(pathPoints.get(2).x-robotPos.x,pathPoints.get(2).y-robotPos.y) >= followMe.followDistance){
-            topBound = nextPointNum;
-        }
 
-        if (nextPointNum==11){
-            topBound = nextPointNum+1;
-        }
-
-        if (nextPointNum==12 && Math.hypot(pathPoints.get(12).x-robotPos.x,pathPoints.get(12).y-robotPos.y) >= followMe.followDistance){
-            topBound = nextPointNum;
-        }
 
         for (int i = nextPointNum-1; i < topBound && i <pathPoints.size()-1;i++){
             CurvePoint startLine = pathPoints.get(i);
@@ -126,8 +140,10 @@ public class RobotMovement {
             double closestAngle = 100000000;
             for (Point thisIntersection: intersections){
                 double angle = Math.atan2(thisIntersection.y-robotPos.y,thisIntersection.x-robotPos.x);
-                double relativeAngle = MathFunctions.AngleWrap(angle - updateBoi.getOrientation() );
+
+                double relativeAngle = MathFunctions.AngleWrap(angle - (updateBoi.getOrientation() + Math.toRadians(90) ) );
                 double deltaAngle = Math.abs(MathFunctions.AngleWrap(relativeAngle - preferredAngle));
+
 
                 if (deltaAngle < closestAngle){
                     closestAngle = deltaAngle;
@@ -136,14 +152,10 @@ public class RobotMovement {
                 }
             }
         }
-        if (nextPointNum==15 && Math.hypot(robotPos.x-pathPoints.get(15).x,robotPos.y-pathPoints.get(15).y) <= followMe.followDistance){
-            followMe.setPoint(robotPos);
-        }
-        if (nextPointNum==14 && Math.hypot(robotPos.x-pathPoints.get(nextPointNum).x,robotPos.y-pathPoints.get(nextPointNum).y) < followMe.followDistance){
-            followMe.turnSpeed = 0;
-        }
+
 
         return followMe;
+
     }
 
 
@@ -155,11 +167,11 @@ public class RobotMovement {
         double absoluteAngleToTarget = Math.atan2(y-updateBoi.getY(),x-updateBoi.getX());
 
         //Finds the angle to the target in the xy coordinates of the robot
-        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - updateBoi.getOrientation());
-
+        double relativeAngle = MathFunctions.AngleWrap(absoluteAngleToTarget - updateBoi.getOrientation() );
 
         double relativeXtoPoint = Math.cos(relativeAngle)*distanceToTarget;
         double relativeYtoPoint = Math.sin(relativeAngle)*distanceToTarget;
+
 
         double magnitude = Math.hypot(relativeXtoPoint,relativeYtoPoint);
         double movementXPower = relativeXtoPoint/magnitude;
@@ -179,16 +191,14 @@ public class RobotMovement {
         }
 
         if (distanceToTarget>=10){
-            movement_turn = Range.clip(relativeTurnAngle/Math.toRadians(30),-1,1)* turnSpeed;
+            movement_turn = Range.clip(relativeTurnAngle/slowDownTurnRadians,-1,1)* turnSpeed;
         }else{
             movement_turn = 0;
         }
 
 
         w.UpdateInput(movement_x,movement_y,movement_turn);
-        movex = movement_x;
-        movey = movement_y;
-        moveturn = movement_turn;
+
         robot.updateDriveTrainInputs(w);
 
 

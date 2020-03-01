@@ -119,12 +119,28 @@ public class MathFunctions {
             maxX = startLine.x;
         }
 
+        double minY;
+        double maxY;
+        if (startLine.y < endLine.y){
+            minY = startLine.y;
+            maxY = endLine.y;
+        }else{
+            minY = endLine.y;
+            maxY = startLine.y;
+        }
+
+
+
         double[] ret = new double[3];
-        if (xIntersection > minX && xIntersection < maxX){
+        if (xIntersection >= minX && xIntersection < maxX){
             ret[0] = distance;
             ret[1] = xIntersection;
             ret[2] = yIntersection;
 
+        }else if(yIntersection > minY && yIntersection < maxY){
+            ret[0] = distance;
+            ret[1] = xIntersection;
+            ret[2] = yIntersection;
         }else{
             ret[0] = 1000000;
             ret[1] = 1000000;
