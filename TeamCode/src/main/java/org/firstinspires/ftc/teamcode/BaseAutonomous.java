@@ -142,15 +142,17 @@ public abstract class BaseAutonomous extends LinearOpMode {
             if (initialD-distanceToTarget < accelerateDistance && multiplier < movementSpeed){
                 multiplier+= acceleration*(runtime.seconds()-pastTime);
             }
-            pastTime = runtime.seconds();
 
+            if (distanceToTarget < accelerateDistance && multiplier > 0){
+                multiplier-= acceleration*(runtime.seconds()-pastTime);
+            }
+            pastTime = runtime.seconds();
 
             double magnitude = Math.hypot(relativeXtoPoint,relativeYtoPoint);
             double movementXPower = relativeXtoPoint/magnitude;
             double movementYPower = relativeYtoPoint/magnitude;
 
             double movement_x, movement_y, movement_turn;
-
 
             movement_x = movementXPower * multiplier;
             movement_y = movementYPower * multiplier;
