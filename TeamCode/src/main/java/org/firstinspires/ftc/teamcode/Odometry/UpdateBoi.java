@@ -27,7 +27,7 @@ public class UpdateBoi{
     private double horizontalEncoderTickPerDegreeOffset;
 
     //Sleep time interval (milliseconds) for the position update thread
-    private int sleepTime;
+
 
     //Files to access the algorithm constants
     private File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -42,13 +42,12 @@ public class UpdateBoi{
      * @param verticalEncoderLeft left odometry encoder, facing the vertical direction
      * @param verticalEncoderRight right odometry encoder, facing the vertical direction
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
-     * @param threadSleepDelay delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public UpdateBoi(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay){
+    public UpdateBoi(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH){
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
-        sleepTime = threadSleepDelay;
+
 
         robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
         this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
