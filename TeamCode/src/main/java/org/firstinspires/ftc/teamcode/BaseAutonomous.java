@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -103,10 +104,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         robot = new HardwareSkyStone(test);
         robot.init(hardwareMap);
-        //initVuforia();
+        initVuforia();
         robot.setMode("encoders lmao");
         UpdateBoi u = new UpdateBoi(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, robot.imu);
-
         telemetry.addData(">", "haddi ready.");    //
         telemetry.update();
 
@@ -540,8 +540,8 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
     public void succ() {
-        robot.spinner.setPower(-1);
-        robot.spinner2.setPower(-1);
+        robot.spinner.setPower(1);
+        robot.spinner2.setPower(1);
 
     }
     public void succstop(){
@@ -550,11 +550,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void spit() {
-        robot.spinner.setPower(1);
-        robot.spinner2.setPower(1);
-        sleep(1000);
-        robot.spinner.setPower(0);
-        robot.spinner2.setPower(0);
+        robot.spinner.setPower(-1);
+        robot.spinner2.setPower(-1);
+
 
     }
 
@@ -996,7 +994,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
 
         com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
-        com.vuforia.CameraDevice.getInstance().setField("zoom","30");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","27");
 
         while (runtime.seconds()<5 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.

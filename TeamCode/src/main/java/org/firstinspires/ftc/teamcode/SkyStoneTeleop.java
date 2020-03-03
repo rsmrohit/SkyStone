@@ -279,27 +279,27 @@ public class SkyStoneTeleop extends OpMode{
 
         //Clamper code
         //toggle
-        if (gamepad2.right_bumper && !pastStateRbumper) {
-            clamp = !clamp;
-        }
-
-        if (clamp) {
-            robot.clamper.setPosition(0.14);
-        } else if (!clamp) {
-            robot.clamper.setPosition(0.03);
-        }
-
-        pastStateRbumper = gamepad2.right_bumper;
-
-//            telemetry.addData("clamp","initiated");
-//            telemetry.update();
-//            robot.clamper.setPosition(0.14);
-//        } else if (gamepad2.left_bumper) {
-////            telemetry.addData("clamp","opened");
-////            telemetry.update();
+//        if (gamepad2.right_bumper && !pastStateRbumper) {
+//            clamp = !clamp;
+//        }
 //
+//        if (clamp) {
+//            robot.clamper.setPosition(0.14);
+//        } else if (!clamp) {
 //            robot.clamper.setPosition(0.03);
 //        }
+//
+//        pastStateRbumper = gamepad2.right_bumper;
+        if (gamepad2.right_bumper) {
+            telemetry.addData("clamp","initiated");
+            telemetry.update();
+            robot.clamper.setPosition(0.14);
+        } else if (gamepad2.left_bumper) {
+//            telemetry.addData("clamp","opened");
+//            telemetry.update();
+
+            robot.clamper.setPosition(0.03);
+        }
 
 
         if (gamepad2.b && !pastStateB) {
@@ -399,10 +399,16 @@ public class SkyStoneTeleop extends OpMode{
 
 
 
+        telemetry.addData("frontleft", robot.frontLeft.getCurrentPosition());
+        telemetry.addData("frontright", robot.frontRight.getCurrentPosition());
+        telemetry.addData("backleft", robot.backLeft.getCurrentPosition());
+        telemetry.addData("backright", robot.backRight.getCurrentPosition());
+        telemetry.addData("verticalslider", robot.verticalSlider.getCurrentPosition());
 
-        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
-        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
-        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
+//        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
+//        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
+//        telemetry.addData("Orientation (Degrees)", globalPositionUpdate.getOrientation());
+//        telemetry.addData("horizontal", robot.horizontalSlider.getCurrentPosition());
         //telemetry.addData("Imu", robot.imu.getAngularOrientation().firstAngle);
 
 //        telemetry.addData("vertical LEft", delta[0]);
