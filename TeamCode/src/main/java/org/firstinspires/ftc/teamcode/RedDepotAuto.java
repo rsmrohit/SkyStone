@@ -158,10 +158,10 @@ public class RedDepotAuto extends BaseAutonomous {
             release();
             encoderMecanumDrive(0.7, 80,5,0,-1);
             bruh();
-            dumbencoderMecanumDrive(0.7,200, 4, 0,1,false);
-            encoderMecanumDrive(0.5,25,5,-1,1);
+            dumbencoderMecanumDrive(0.7,195, 4, 0,1,false);
+            encoderMecanumDrive(0.5,35,5,-1,0);
             succ();
-            encoderMecanumDrive(0.6,50,5,0,1);
+//            encoderMecanumDrive(0.6,50,5,0,1);
 
 
 
