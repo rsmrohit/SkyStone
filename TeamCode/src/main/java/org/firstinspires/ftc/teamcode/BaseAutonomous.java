@@ -1092,7 +1092,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
         com.vuforia.CameraDevice.getInstance().setField("zoom","27");
 
-        while (runtime.seconds()<5 && !isStopRequested()){
+        while (runtime.seconds()<3 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -1140,6 +1140,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     public String vuforiaJointo(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
         runtime.reset();
+
+        com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
+
+        com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","27");
 
 
         while (runtime.seconds()<1.5 && !isStopRequested()){
