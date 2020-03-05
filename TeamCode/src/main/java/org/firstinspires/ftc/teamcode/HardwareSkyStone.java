@@ -41,6 +41,11 @@ public class HardwareSkyStone  {
 
     public Servo capstone = null;
 
+    public Servo extendoright = null;
+    public Servo turnoright = null;
+//    public Servo extendoleft = null;
+//    public Servo turnoleft = null;
+
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
 
@@ -96,6 +101,12 @@ public class HardwareSkyStone  {
             clamper = hwMap.get(Servo.class, "clamper");
             capstone = hwMap.get(Servo.class,"capstone_servo");
 
+            extendoright = hwMap.get(Servo.class, "extendo_right");
+            turnoright = hwMap.get(Servo.class, "turno_right");
+
+//            extendoleft = hwMap.get(Servo.class, "extendo_left");
+//            turnoleft = hwMap.get(Servo.class, "turno_left");
+
             verticalSlider.setDirection(DcMotor.Direction.REVERSE);
             spinner.setDirection(DcMotor.Direction.REVERSE);
             spinner2.setDirection(DcMotor.Direction.FORWARD);
@@ -110,6 +121,11 @@ public class HardwareSkyStone  {
             clamper.setPosition(0.03);
             capstone.setPosition(0.2);
 
+            extendoright.setPosition(0.05);
+//            extendoleft.setPosition(0);
+//            turnoleft.setPosition(0);
+            turnoright.setPosition(0);
+
         }
 
 
@@ -123,7 +139,6 @@ public class HardwareSkyStone  {
         frontRight.setPower(0);
         backRight.setPower(0);
         backLeft.setPower(0);
-
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

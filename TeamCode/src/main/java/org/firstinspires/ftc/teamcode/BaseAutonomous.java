@@ -103,11 +103,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
     public void inithardware(boolean test){
 
         robot = new HardwareSkyStone(test);
+
         robot.init(hardwareMap);
+
         initVuforia();
         robot.setMode("encoders lmao");
-        UpdateBoi u = new UpdateBoi(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, robot.imu);
-        telemetry.addData(">", "haddi ready.");    //
+        //UpdateBoi u = new UpdateBoi(robot.verticalLeft, robot.verticalRight, robot.horizontal, COUNTS_PER_INCH, robot.imu);
+        telemetry.addData("robot", "initialized.");    //
         telemetry.update();
 
 
@@ -250,10 +252,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
             wheels.UpdateInput(move_x, move_y, 0);
 
 
-            frontLeftSign = (int) (Math.abs(wheels.getFrontLeftPower())/wheels.getFrontLeftPower());
-            frontRightSign = (int) (Math.abs(wheels.getFrontRightPower())/wheels.getFrontRightPower());
-            backLeftSign = (int) (Math.abs(wheels.getRearLeftPower()) /wheels.getRearLeftPower());
-            backRightSign = (int) (Math.abs(wheels.getRearRightPower())/wheels.getRearRightPower());
+            frontLeftSign = (int) ( Math.abs(wheels.getFrontLeftPower()) /wheels.getFrontLeftPower());
+            frontRightSign = (int) ( Math.abs(wheels.getFrontRightPower()) /wheels.getFrontRightPower());
+            backLeftSign = (int) ( Math.abs(wheels.getRearLeftPower() ) /wheels.getRearLeftPower());
+            backRightSign = (int) ( Math.abs(wheels.getRearRightPower()) /wheels.getRearRightPower());
 
 
 
@@ -296,6 +298,83 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 telemetry.addData("BackLeftPower",robot.backLeft.getPower());
 
                 telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.frontLeft.setPower(0);
+            robot.frontRight.setPower(0);
+            robot.backRight.setPower(0);
+            robot.backLeft.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
+
+    public void bencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y) {
+        int     newFrontLeftTarget;
+        int     newFrontRightTarget;
+        int     newBackLeftTarget;
+        int     newBackRightTarget;
+        int     frontLeftSign;
+        int     frontRightSign;
+        int     backLeftSign;
+        int     backRightSign;
+        boolean once = false;
+        MecanumWheels wheels = new MecanumWheels();
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            wheels.UpdateInput(move_x, move_y, 0);
+
+
+            frontLeftSign = (int) ( Math.abs(wheels.getFrontLeftPower()) /wheels.getFrontLeftPower());
+            frontRightSign = (int) ( Math.abs(wheels.getFrontRightPower()) /wheels.getFrontRightPower());
+            backLeftSign = (int) ( Math.abs(wheels.getRearLeftPower() ) /wheels.getRearLeftPower());
+            backRightSign = (int) ( Math.abs(wheels.getRearRightPower()) /wheels.getRearRightPower());
+
+
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontLeftSign);
+            newBackLeftTarget = robot.backLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backLeftSign);
+            newFrontRightTarget = robot.frontRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*frontRightSign);
+            newBackRightTarget = robot.backRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*backRightSign);
+
+
+            //Set target position
+            robot.frontLeft.setTargetPosition(newFrontLeftTarget);
+            robot.frontRight.setTargetPosition(newFrontRightTarget);
+            robot.backLeft.setTargetPosition(newBackLeftTarget);
+            robot.backRight.setTargetPosition(newBackRightTarget);
+
+
+
+            // Turn On RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed));
+            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed));
+            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed));
+            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed));
+
+
+
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels) && !isStopRequested()) {
+                if (Math.abs(robot.frontLeft.getCurrentPosition()-robot.frontLeft.getTargetPosition()) < 40 && !once){
+                    once = true;
+                    robot.turnoright.setPosition(0);
+                }
             }
 
             // Stop all motion;
@@ -579,6 +658,23 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.rightclaw.setPosition(0.5);
         robot.leftclaw.setPosition(0.5);
 
+    }
+
+    public void rightClamp(){
+        robot.extendoright.setPosition(0.45);
+    }
+    public void bruhhh(){
+        robot.extendoright.setPosition(0.5);
+        sleep(100);
+        robot.turnoright.setPosition(0.48);
+    }
+    public void liftClamp(){
+        robot.extendoright.setPosition(0.1);
+    }
+
+    public void dropThaBlock(){
+        robot.extendoright.setPosition(0.2);
+        robot.turnoright.setPosition(0);
     }
 
     public void dumbencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y, boolean out) {

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
 @Autonomous(name = "blueBuildingSiteAuto",group = "SkyStone")
 public class blueBuildingSiteAuto extends BaseAutonomous {
 
@@ -9,6 +12,7 @@ public class blueBuildingSiteAuto extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         inithardware(false);
         waitForStart();
+        robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         release();
         encoderMecanumDrive(DRIVE_SPEED,65,2,0,-1);
         encoderMecanumDrive(DRIVE_SPEED,30,2,1,0);

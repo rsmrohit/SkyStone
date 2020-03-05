@@ -20,10 +20,12 @@ public class TestTeleop extends OpMode {
     @Override
     public void loop() {
         if (gamepad1.a){
-            robot.clamper.setPosition(0.15);
+            robot.extendoright.setPosition(1);
+            robot.turnoright.setPosition(0);
 
         }else if(gamepad1.b){
-            robot.clamper.setPosition(0.1);
+            robot.extendoright.setPosition(0.5);
+            robot.turnoright.setPosition(0.18);
         }else if (gamepad1.x){
             robot.clamper.setPosition(0.13);
         }

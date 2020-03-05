@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
 @Autonomous(name = "BlueDepotAuto",group = "SkyStone")
 public class BlueDepotAuto extends BaseAutonomous {
 
@@ -17,6 +20,7 @@ public class BlueDepotAuto extends BaseAutonomous {
 
         //Wait for the start button to be pressed
         waitForStart();
+        robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         encoderMecanumDrive(0.9,35,5,0,1);
 
         String location = vuforiaJointo(haddi,buddi);
