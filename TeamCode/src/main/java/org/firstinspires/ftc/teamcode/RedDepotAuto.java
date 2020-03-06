@@ -17,7 +17,6 @@ public class RedDepotAuto extends BaseAutonomous {
 
         //Wait for the start button to be pressed
         waitForStart();
-//        encoderMecanumDrive(0.9,35,5,0,1);
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
         String location = vuforiaJoint(haddi,buddi);
 
@@ -30,7 +29,7 @@ public class RedDepotAuto extends BaseAutonomous {
         if (location.equals("Center")){
             //move to block
             encoderMecanumDrive(0.9, 60,5,1,0);
-            encoderMecanumDrive(0.4,22.8,1,0,-1);
+            encoderMecanumDrive(0.4,18,1,0,-1);
 
             rightClamp();
 
@@ -40,63 +39,14 @@ public class RedDepotAuto extends BaseAutonomous {
             sleep(500);
             liftClamp();
             encoderMecanumDrive(0.9,20,5,-1,0);
-            encoderMecanumDrive(0.9,175,10,0,1);
+            encoderMecanumDrive(0.9,195,10,0,1);
             encoderMecanumDrive(0.9,31,5,1,0);
             dropThaBlock();
-            gyroTurn(0.5,0);
+            gyroTurn(0.5,0,2);
             robot.turnoright.setPosition(0.48);
             encoderMecanumDrive(0.9,31,10,-1,0);
-            gyroTurnAndMove(0.8,180,0.5,180);
-
-
-
-        } else if (location.equals("Right")){
-
-
-            //move to block
-            encoderMecanumDrive(0.9, 60,5,1,0);
-            encoderMecanumDrive(0.4,43.1,1,0,-1);
-
-            rightClamp();
-
-            encoderMecanumDrive(0.5,25,5,1,0);
-
-            bruhhh();
-            sleep(500);
-            liftClamp();
-            encoderMecanumDrive(0.9,20,5,-1,0);
-            encoderMecanumDrive(0.9,175,10,0,1);
-            encoderMecanumDrive(0.9,31,5,1,0);
-            dropThaBlock();
-            gyroTurn(0.5,0);
-            robot.turnoright.setPosition(0.48);
-            encoderMecanumDrive(0.9,31,10,-1,0);
-            gyroTurnAndMove(0.8,180,0.5,180);
-
-
-        } else {
-
-            //move to block
-            encoderMecanumDrive(0.9, 60,5,1,0);
-            encoderMecanumDrive(0.4,2.5,1,0,-1);
-
-            rightClamp();
-
-            encoderMecanumDrive(0.5,25,5,1,0);
-
-            bruhhh();
-            sleep(500);
-            liftClamp();
-            encoderMecanumDrive(0.9,20,5,-1,0);
-            encoderMecanumDrive(0.9,175,10,0,1);
-            encoderMecanumDrive(0.9,31,5,1,0);
-            dropThaBlock();
-            gyroTurn(0.5,0);
-            robot.turnoright.setPosition(0.48);
-            encoderMecanumDrive(0.9,31,10,-1,0);
-
-            //Head back to pick up the second skystone
-            bencoderMecanumDrive(0.9,240,10,0,-1);
+            bencoderMecanumDrive(0.9,225,10,0,-1);
+            encoderMecanumDrive(0.3,30,5,0,-1);
             rightClamp();
 
             encoderMecanumDrive(0.5,30,5,1,0);
@@ -104,23 +54,117 @@ public class RedDepotAuto extends BaseAutonomous {
             bruhhh();
             sleep(500);
             liftClamp();
-            encoderMecanumDrive(0.9,25,5,-1,0);
-            encoderMecanumDrive(0.9,255,10,0,1);
-            encoderMecanumDrive(0.9,31,5,1,0);
+            encoderMecanumDrive(0.9,28,5,-1,0);
+            encoderMecanumDrive(0.9,270,10,0,1);
+            encoderMecanumDrive(0.9,34,5,1,0);
             dropThaBlock();
             encoderMecanumDrive(0.5,15,5,-1,0);
-            gyroTurn(0.7,90);
+            gyroTurn(0.7,90,2);
             encoderMecanumDrive(0.9,15,5,1,0);
             encoderMecanumDrive(0.9,30,5,0,-1);
             robot.turnoright.setPosition(0.48);
-            grab();
-            sleep(1000);
-            encoderMecanumDrive(0.9,30,5,0,1);
-            gyroCurve(0.7,180,0,0.5);
-            release();
-            sleep(500);
-            encoderMecanumDrive(0.9,50,5,0,1);
+            robot.extendoright.setPosition(0);
 
+
+            grab();
+            gyroCurve(0.3,180,0,0.5);
+            gyroTurn(1.0,180,7);
+            release();
+            encoderMecanumDrive(1.0,15,5,0,-1);
+            encoderMecanumDrive(1.0,20,5,-1,0);
+            encoderMecanumDrive(0.9,70,5,0,1);
+
+            spit();
+
+
+        } else if (location.equals("Right")){
+
+
+            //move to block
+            encoderMecanumDrive(0.9, 60,5,1,0);
+            encoderMecanumDrive(0.5,60,1,0,-1);
+
+            rightClamp();
+
+            encoderMecanumDrive(0.5,25,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+
+            encoderMecanumDrive(0.9,25,5,-1,0);
+            encoderMecanumDrive(0.9,215,10,0,1);
+            encoderMecanumDrive(0.9,31,5,1,0);
+            dropThaBlock();
+            gyroTurn(0.5,0,2);
+            robot.turnoright.setPosition(0.48);
+            encoderMecanumDrive(0.9,31,10,-1,0);
+            robot.extendoright.setPosition(0);
+            gyroTurnAndMove(0.8,180,0.8,180);
+
+
+
+
+//            encoderMecanumDrive(0.9,20,5,-1,0);
+//
+//            encoderMecanumDrive(0.9,217.5,10,0,1);
+//            encoderMecanumDrive(0.9,31,5,1,0);
+//            dropThaBlock();
+//            gyroTurn(0.5,0,2);
+//            robot.turnoright.setPosition(0.48);
+//            encoderMecanumDrive(0.9,31,10,-1,0);
+
+
+        } else {
+
+            //move to block
+            encoderMecanumDrive(0.9, 60,5,1,0);
+
+
+            rightClamp();
+
+            encoderMecanumDrive(0.5,25,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            encoderMecanumDrive(0.9,20,5,-1,0);
+            encoderMecanumDrive(0.9,172.5,10,0,1);
+            encoderMecanumDrive(0.9,25,5,1,0);
+            dropThaBlock();
+            gyroTurn(0.5,0,2);
+
+            encoderMecanumDrive(0.9,25,10,-1,0);
+            robot.turnoright.setPosition(0.48);
+            //Head back to pick up the second skystone
+            bencoderMecanumDrive(0.9,233,10,0,-1);
+            rightClamp();
+
+            encoderMecanumDrive(0.5,30,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            encoderMecanumDrive(0.9,28,5,-1,0);
+            encoderMecanumDrive(0.9,248,10,0,1);
+            encoderMecanumDrive(0.9,34,5,1,0);
+            dropThaBlock();
+            encoderMecanumDrive(0.5,15,5,-1,0);
+            gyroTurn(0.7,90,2);
+            encoderMecanumDrive(0.9,15,5,1,0);
+            encoderMecanumDrive(0.9,30,5,0,-1);
+            robot.turnoright.setPosition(0.48);
+            robot.extendoright.setPosition(0);
+
+
+            grab();
+            gyroCurve(0.3,180,0,0.5);
+            gyroTurn(1.0,180,7);
+            release();
+            encoderMecanumDrive(1.0,15,5,0,-1);
+            encoderMecanumDrive(1.0,20,5,-1,0);
+            encoderMecanumDrive(0.9,65,5,0,1);
+            spit();
 
         }
 

@@ -27,7 +27,7 @@ public class redBuildingSiteAuto extends BaseAutonomous {
 
         //go sideways into the wall
 //        encoderMecanumDrive(1,5,1,0,1);
-        gyroTurn(0.7,-90);
+        gyroTurn(0.7,-90,2);
         encoderMecanumDrive(1.0,50,2,-1,0);
 
         encoderMecanumDrive(1.0,80,4,0,1);

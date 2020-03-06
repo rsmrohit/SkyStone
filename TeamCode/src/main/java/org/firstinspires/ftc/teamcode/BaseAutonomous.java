@@ -371,7 +371,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels) && !isStopRequested()) {
-                if (Math.abs(robot.frontLeft.getCurrentPosition()-robot.frontLeft.getTargetPosition()) < 40 && !once){
+                if (Math.abs(robot.frontLeft.getCurrentPosition()-robot.frontLeft.getTargetPosition()) < 100 && !once){
                     once = true;
                     robot.turnoright.setPosition(0);
                 }
@@ -441,10 +441,10 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
     // turn to an angle using gyro
-    public void gyroTurn (  double speed, double angle) {
+    public void gyroTurn (  double speed, double angle, double threshold) {
 
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF, threshold)) {
             // Update telemetry & Allow time for other processes to run.
             telemetry.addData("current_heading", getAverageGyro());
             telemetry.update();
@@ -525,7 +525,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         // determine turn power based on +/- error
         error = getError(angle);
 
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
+        if (Math.abs(error) <= 20) {
             steer = 0.0;
             leftSpeed  = 0.0;
             rightSpeed = 0.0;
@@ -557,7 +557,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
 
     // checks distance for gyroTurn/Drive - slows down when closer to end
-    boolean onHeading(double speed, double angle, double PCoeff) {
+    boolean onHeading(double speed, double angle, double PCoeff, double threshold) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -567,7 +567,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         // determine turn power based on +/- error
         error = getError(angle);
 
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
+        if (Math.abs(error) <= threshold) {
             steer = 0.0;
             leftSpeed  = 0.0;
             rightSpeed = 0.0;
@@ -636,33 +636,25 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void grab(){
-        robot.rightclaw.setPosition(0);
-        robot.leftclaw.setPosition(1.0);
-
+        robot.rightclaw.setPower(1);
+        robot.leftclaw.setPower(1);
+        sleep(800);
     }
 
-    public void smallgrab(){
-        encoderMecanumDrive(0.4,7,1,0,-1);
-        robot.rightclaw.setPosition(1);
-        robot.rightclaw.setPosition(1);
-        sleep(100);
-        robot.rightclaw.setPosition(0);
-        robot.leftclaw.setPosition(0);
-        sleep(150);
-    }
 
     public void release(){
-        robot.rightclaw.setPosition(1.0);
-        robot.leftclaw.setPosition(0);
-        sleep(350);
-        robot.rightclaw.setPosition(0.5);
-        robot.leftclaw.setPosition(0.5);
+        robot.rightclaw.setPower(-1);
+        robot.leftclaw.setPower(-1);
+        sleep(550);
+        robot.rightclaw.setPower(0);
+        robot.leftclaw.setPower(0);
 
     }
 
     public void rightClamp(){
         robot.extendoright.setPosition(0.45);
     }
+
     public void bruhhh(){
         robot.extendoright.setPosition(0.5);
         sleep(100);
@@ -673,8 +665,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
     }
 
     public void dropThaBlock(){
-        robot.extendoright.setPosition(0.2);
+        robot.extendoright.setPosition(0.25);
         robot.turnoright.setPosition(0);
+        sleep(300);
     }
 
     public void dumbencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y, boolean out) {
@@ -914,6 +907,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    public void bruhturn(int direction){
+        robot.updateDriveTrainInputs(direction,-direction,direction,-direction);
+        sleep(100);
+        robot.updateDriveTrainInputs(0,0,0,0);
+    }
 
 
 
@@ -1090,7 +1088,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
 
         com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
-        com.vuforia.CameraDevice.getInstance().setField("zoom","27");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","25");
 
         while (runtime.seconds()<3 && !isStopRequested()){
             // check all the trackable targets to see which one (if any) is visible.
@@ -1119,9 +1117,9 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -5.5){
+                if (translation.get(1)/mmPerInch < -3.75){
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 0.5){
+                } else if (translation.get(1)/mmPerInch < 2.8){
                     return "Center";
                 } else {
                     return "Right";
@@ -1135,7 +1133,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
 
         targetsSkyStone.deactivate();
-        return "Right";
+        return "Left";
     }
 
     public String vuforiaJointo(VuforiaTrackables targetsSkyStone, List<VuforiaTrackable> allTrackables){
@@ -1144,7 +1142,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
         com.vuforia.CameraDevice.getInstance().setFlashTorchMode(true);
 
         com.vuforia.CameraDevice.getInstance().setField("opti-zoom","opti-zoom-on");
-        com.vuforia.CameraDevice.getInstance().setField("zoom","27");
+        com.vuforia.CameraDevice.getInstance().setField("zoom","25");
 
 
         while (runtime.seconds()<1.5 && !isStopRequested()){

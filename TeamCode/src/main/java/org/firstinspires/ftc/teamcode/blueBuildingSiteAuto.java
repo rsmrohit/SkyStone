@@ -13,21 +13,21 @@ public class blueBuildingSiteAuto extends BaseAutonomous {
         inithardware(false);
         waitForStart();
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        release();
         encoderMecanumDrive(DRIVE_SPEED,65,2,0,-1);
         encoderMecanumDrive(DRIVE_SPEED,30,2,1,0);
         encoderMecanumDrive(0.5,22.5,2,0,-1);
+        sleep(1000);
         grab();
-        sleep(300);
+        sleep(1000);
 
         encoderMecanumDrive(1.0,50,5,0,1);
-        gyroCurve(0.8,90,0,0.5);
+        gyroCurve(0.5,90,0,1);
         release();
         encoderMecanumDrive(0.6,50,5,0,-1);
 
         //go sideways into the wall
 //        encoderMecanumDrive(1,5,1,0,1);
-        gyroTurn(0.7,90);
+        gyroTurn(0.7,90,2);
         encoderMecanumDrive(1.0,50,2,1,0);
 
         encoderMecanumDrive(1.0,80,4,0,1);

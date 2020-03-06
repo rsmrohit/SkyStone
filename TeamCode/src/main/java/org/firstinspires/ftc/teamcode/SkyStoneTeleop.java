@@ -216,16 +216,16 @@ public class SkyStoneTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.right_bumper) {
 //            telemetry.addData("bruh","bruh");
-            robot.rightclaw.setPosition(0);
-            robot.leftclaw.setPosition(1.0);
-        } else if (gamepad1.right_bumper) {
-            robot.rightclaw.setPosition(1.0);
-            robot.leftclaw.setPosition(0);
+            robot.rightclaw.setPower(1);
+            robot.leftclaw.setPower(1);
+        } else if (gamepad1.left_bumper) {
+            robot.rightclaw.setPower(-1);
+            robot.leftclaw.setPower(-1);
         } else {
-            robot.rightclaw.setPosition(0.5);
-            robot.leftclaw.setPosition(0.5);
+            robot.rightclaw.setPower(0);
+            robot.leftclaw.setPower(0);
         }
 
 
@@ -399,11 +399,11 @@ public class SkyStoneTeleop extends OpMode{
 
 
 
-        telemetry.addData("frontleft", robot.frontLeft.getCurrentPosition());
-        telemetry.addData("frontright", robot.frontRight.getCurrentPosition());
-        telemetry.addData("backleft", robot.backLeft.getCurrentPosition());
-        telemetry.addData("backright", robot.backRight.getCurrentPosition());
-        telemetry.addData("verticalslider", robot.verticalSlider.getCurrentPosition());
+//        telemetry.addData("frontleft", robot.frontLeft.getCurrentPosition());
+//        telemetry.addData("frontright", robot.frontRight.getCurrentPosition());
+//        telemetry.addData("backleft", robot.backLeft.getCurrentPosition());
+//        telemetry.addData("backright", robot.backRight.getCurrentPosition());
+//        telemetry.addData("verticalslider", robot.verticalSlider.getCurrentPosition());
 
 //        telemetry.addData("X Position", globalPositionUpdate.getX() / COUNTS_PER_INCH);
 //        telemetry.addData("Y Position", globalPositionUpdate.getY() / COUNTS_PER_INCH);
@@ -415,6 +415,7 @@ public class SkyStoneTeleop extends OpMode{
 //        telemetry.addData("vertical right", delta[1]);
 //        telemetry.addData("horizontal", delta[2]);
 
+        telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
         telemetry.update();
 
         }

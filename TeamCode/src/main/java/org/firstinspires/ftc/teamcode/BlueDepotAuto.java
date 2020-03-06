@@ -33,7 +33,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             //strafe and move forward for block setup
             encoderMecanumDrive(0.75,60,1,1,0);
             encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,52);
+            gyroTurn(0.9,52,2);
             succ();
             //move to collect block
             encoderMecanumDrive(0.75,75,4,1,0.95);
@@ -45,7 +45,7 @@ public class BlueDepotAuto extends BaseAutonomous {
 
             robot.clamper.setPosition(0.15);
             //turn towards foundation
-            gyroTurn(0.9,90);
+            gyroTurn(0.9,90,2);
 
             encoderMecanumDrive(1,85,10,0,-1);
             //move to foundation
@@ -70,7 +70,7 @@ public class BlueDepotAuto extends BaseAutonomous {
         }else if(location.equals("Left")){
             encoderMecanumDrive(0.75,24,1,1,0);
             encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,52);
+            gyroTurn(0.9,52,2);
             succ();
             //move to collect block
             encoderMecanumDrive(0.75,75,4,1,0.95);
@@ -81,7 +81,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             succstop();
             robot.clamper.setPosition(0.15);
             //turn towards foundation
-            gyroTurn(0.9,88);
+            gyroTurn(0.9,88,2);
             encoderMecanumDrive(1,105,10,0,-1);
             //move to foundation
             bruh();
@@ -112,7 +112,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.75,8,1,-1,0);
 
             encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,-52);
+            gyroTurn(0.9,-52,2);
             succ();
             //move to collect block
             encoderMecanumDrive(0.75,75,4,-1.0,0.95);
@@ -120,7 +120,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             //fine tune grab block
             encoderMecanumDrive(1,20,4,0.819152,-0.573576);
 
-            gyroTurn(0.9,0);
+            gyroTurn(0.9,0,2);
             encoderMecanumDrive(1,45,10,0,-1);
             gyroTurnAndMove(0.9,88,0.5,-90);
             succstop();
