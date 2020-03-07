@@ -29,13 +29,16 @@ public class Testing extends BaseAutonomous {
         waitForStart();
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
-        grab();
-        gyroCurve(0.3,initiala+90,0,0.5);
-        gyroTurn(1.0,initiala+90,7);
-        release();
-        encoderMecanumDrive(1.0,15,5,0,-1);
-        encoderMecanumDrive(1.0,20,5,-1,0);
-        encoderMecanumDrive(0.9,65,5,0,1);
+        encoderMecanumDriveDirection(0.9, 72,5,-108);
+
+
+//        grab();
+//        gyroCurve(0.3,initiala+90,0,0.5);
+//        gyroTurn(1.0,initiala+90,7);
+//        release();
+//        encoderMecanumDrive(1.0,15,5,0,-1);
+//        encoderMecanumDrive(1.0,20,5,-1,0);
+//        encoderMecanumDrive(0.9,65,5,0,1);
 
 
 

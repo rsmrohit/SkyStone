@@ -315,7 +315,82 @@ public abstract class BaseAutonomous extends LinearOpMode {
         }
     }
 
-    public void bencoderMecanumDrive(double speed, double distance , double timeoutS, double move_x, double move_y) {
+    // simple directional drive function for a mecanum drive train
+    public void encoderMecanumDriveDirection(double speed, double distance , double timeoutS, double intendedDirection) {
+        int     newFrontLeftTarget;
+        int     newFrontRightTarget;
+        int     newBackLeftTarget;
+        int     newBackRightTarget;
+        int     frontLeftInitial;
+        int     frontRightInitial;
+        int     backLeftInitial;
+        int     backRightInitial;
+        MecanumWheels wheels = new MecanumWheels();
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            double delta = robot.imu.getAngularOrientation().firstAngle-intendedDirection;
+            double deltaRad = delta*Math.PI/180;
+            double x = Math.sin(deltaRad);
+            double y = Math.cos(deltaRad);
+
+            wheels.UpdateInput(x, y, 0);
+
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = robot.frontLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*wheels.getFrontLeftPower());
+            newBackLeftTarget = robot.backLeft.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*wheels.getRearLeftPower());
+            newFrontRightTarget = robot.frontRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*wheels.getFrontRightPower());
+            newBackRightTarget = robot.backRight.getCurrentPosition() + (int)(distance * COUNTS_PER_CM*wheels.getRearRightPower());
+
+
+            //Set target position
+            robot.frontLeft.setTargetPosition(newFrontLeftTarget);
+            robot.frontRight.setTargetPosition(newFrontRightTarget);
+            robot.backLeft.setTargetPosition(newBackLeftTarget);
+            robot.backRight.setTargetPosition(newBackRightTarget);
+
+
+
+            // Turn On RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.updateDriveTrainInputs(wheels,speed);
+
+
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels) && !isStopRequested()) {
+                delta = robot.imu.getAngularOrientation().firstAngle-intendedDirection;
+                deltaRad = delta*Math.PI/180;
+                x = Math.sin(deltaRad);
+                y = Math.cos(deltaRad);
+                wheels.UpdateInput(x,y,0);
+                robot.updateDriveTrainInputs(wheels,speed);
+
+                telemetry.addData("imu",robot.imu.getAngularOrientation().firstAngle);
+                telemetry.addData("delta",delta);
+
+                telemetry.update();
+            }
+
+            robot.updateDriveTrainInputs(0,0,0,0);
+
+            // Turn off RUN_TO_POSITION
+            robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
+    }
+
+
+    public void bencoderMecanumDrive(double speed, double distance , double timeoutS, double intendedDirection) {
         int     newFrontLeftTarget;
         int     newFrontRightTarget;
         int     newBackLeftTarget;
@@ -329,8 +404,12 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-            wheels.UpdateInput(move_x, move_y, 0);
+            double delta = robot.imu.getAngularOrientation().firstAngle-intendedDirection;
+            double deltaRad = delta*Math.PI/180;
+            double x = Math.sin(deltaRad);
+            double y = Math.cos(deltaRad);
 
+            wheels.UpdateInput(x, y, 0);
 
             frontLeftSign = (int) ( Math.abs(wheels.getFrontLeftPower()) /wheels.getFrontLeftPower());
             frontRightSign = (int) ( Math.abs(wheels.getFrontRightPower()) /wheels.getFrontRightPower());
@@ -363,25 +442,25 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.frontLeft.setPower(Math.abs(wheels.getFrontLeftPower()*speed));
-            robot.frontRight.setPower(Math.abs(wheels.getFrontRightPower()*speed));
-            robot.backRight.setPower(Math.abs(wheels.getRearRightPower()*speed));
-            robot.backLeft.setPower(Math.abs(wheels.getRearLeftPower()*speed));
+            robot.updateDriveTrainInputs(wheels,speed);
 
 
 
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && areMotorsRunning(wheels) && !isStopRequested()) {
-                if (Math.abs(robot.frontLeft.getCurrentPosition()-robot.frontLeft.getTargetPosition()) < 100 && !once){
+                delta = robot.imu.getAngularOrientation().firstAngle-intendedDirection;
+                deltaRad = delta*Math.PI/180;
+                x = Math.sin(deltaRad);
+                y = Math.cos(deltaRad);
+                wheels.UpdateInput(x,y,0);
+                robot.updateDriveTrainInputs(wheels,speed);
+
+                if (Math.abs(robot.frontLeft.getCurrentPosition()-robot.frontLeft.getTargetPosition()) < 200 && !once){
                     once = true;
                     robot.turnoright.setPosition(0);
                 }
             }
 
-            // Stop all motion;
-            robot.frontLeft.setPower(0);
-            robot.frontRight.setPower(0);
-            robot.backRight.setPower(0);
-            robot.backLeft.setPower(0);
+            robot.updateDriveTrainInputs(0,0,0,0);
 
             // Turn off RUN_TO_POSITION
             robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -666,6 +745,11 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     public void dropThaBlock(){
         robot.extendoright.setPosition(0.25);
+        robot.turnoright.setPosition(0);
+        sleep(300);
+    }
+    public void yeetThaBlock(){
+        robot.extendoright.setPosition(0.42);
         robot.turnoright.setPosition(0);
         sleep(300);
     }
@@ -1118,10 +1202,13 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 if (translation.get(1)/mmPerInch < -3.75){
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Left";
                 } else if (translation.get(1)/mmPerInch < 2.8){
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Center";
                 } else {
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Right";
                 }
 
@@ -1131,7 +1218,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             }
             telemetry.update();
         }
-
+        com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
         targetsSkyStone.deactivate();
         return "Left";
     }
@@ -1172,11 +1259,14 @@ public abstract class BaseAutonomous extends LinearOpMode {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                if (translation.get(1)/mmPerInch < -4.45){
+                if (translation.get(1)/mmPerInch < -3){
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Left";
-                } else if (translation.get(1)/mmPerInch < 2.9){
+                } else if (translation.get(1)/mmPerInch < 4){
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Center" ;
                 } else {
+                    com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
                     return "Right";
                 }
 
@@ -1186,7 +1276,7 @@ public abstract class BaseAutonomous extends LinearOpMode {
             }
             telemetry.update();
         }
-
+        com.vuforia.CameraDevice.getInstance().setFlashTorchMode(false);
         targetsSkyStone.deactivate();
         return "Right";
     }

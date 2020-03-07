@@ -13,145 +13,149 @@ public class BlueDepotAuto extends BaseAutonomous {
 
         //Initialize the hardware using BaseAutonomous Function
         inithardware(false);
-        telemetry.clear();
-        telemetry.addData("program","initialized");
+        telemetry.addData("imu", robot.imu.getAngularOrientation().firstAngle);
         telemetry.update();
-
 
         //Wait for the start button to be pressed
         waitForStart();
         robot.imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-        encoderMecanumDrive(0.9,35,5,0,1);
-
         String location = vuforiaJointo(haddi,buddi);
+
         telemetry.addData("location", location);
         telemetry.update();
-
+        sleep(1000);
 
         if (location.equals("Center")){
-            //first block
-            //strafe and move forward for block setup
-            encoderMecanumDrive(0.75,60,1,1,0);
-            encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,52,2);
-            succ();
-            //move to collect block
-            encoderMecanumDrive(0.75,75,4,1,0.95);
-            //fine tune grab block
-            encoderMecanumDrive(1,18,4,-0.819152,-0.573576);
-            //move back to be able to move to foundation
-            encoderMecanumDrive(1,68,4,0,-1);
-            succstop();
-
-            robot.clamper.setPosition(0.15);
-            //turn towards foundation
-            gyroTurn(0.9,90,2);
-
-            encoderMecanumDrive(1,85,10,0,-1);
-            //move to foundation
-            bruh();
-            robot.clamper.setPosition(0.03);
+            //move to block
+            encoderMecanumDriveDirection(0.9, 75,5,-108);
 
 
-            //coming back to get second block
-            dumbencoderMecanumDrive(1,170, 4, 0,1,false);
-            encoderMecanumDrive(1,60,10,1,0);
-            succ();
-            encoderMecanumDrive(0.5,20,10,0,1);
-            encoderMecanumDrive(1,130,10,-1,-1);
-            succstop();
-            robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(1,130,9,0,-1);
-            bruhbuddi();
-            //move to park
-            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
+            rightClamp();
+
+            encoderMecanumDrive(0.5,28,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+
+            gyroTurn(0.5,0,1);
+            telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+
+            encoderMecanumDriveDirection(0.9,23,5,90);
 
 
-        }else if(location.equals("Left")){
-            encoderMecanumDrive(0.75,24,1,1,0);
-            encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,52,2);
-            succ();
-            //move to collect block
-            encoderMecanumDrive(0.75,75,4,1,0.95);
-            //fine tune grab block
-            encoderMecanumDrive(1,18,4,-0.819152,-0.573576);
-            //move back to be able to move to foundation
-            encoderMecanumDrive(1,68,4,0,-1);
-            succstop();
-            robot.clamper.setPosition(0.15);
-            //turn towards foundation
-            gyroTurn(0.9,88,2);
-            encoderMecanumDrive(1,105,10,0,-1);
-            //move to foundation
-            bruh();
-            robot.clamper.setPosition(0.03);
+            encoderMecanumDriveDirection(1.0,177,10,180);
+            encoderMecanumDrive(0.9,27,5,1,0);
+            yeetThaBlock();
+            gyroTurn(0.5,0,1);
+
+            encoderMecanumDriveDirection(0.9,25,3,90);
+            robot.turnoright.setPosition(0.48);
+            robot.extendoright.setPosition(0);
+
+            //Head back to pick up the second skystone
+            bencoderMecanumDrive(0.9,240,10,0);
+            rightClamp();
+
+            encoderMecanumDriveDirection(0.5,25,5,-90);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+
+            encoderMecanumDriveDirection(0.9,28,5,90);
+
+            encoderMecanumDriveDirection(1.0,275,10,180);
+            encoderMecanumDrive(0.9,35,5,1,0);
+            yeetThaBlock();
+            encoderMecanumDriveDirection(0.5,15,5,90);
+            gyroTurn(0.7,90,2);
+
+            encoderMecanumDriveDirection(0.9,16,5,-90);
+            robot.turnoright.setPosition(0.48);
+            robot.extendoright.setPosition(0);
+            sleep(1000);
+
+            grab();
+            encoderMecanumDriveDirection(1,30,5,90);
+            gyroCurve(1.0,0,0,0.6);
+            gyroTurn(1.0,0,7);
+            release();
+            encoderMecanumDriveDirection(1.0,15,5,180);
+//            encoderMecanumDrive(1.0,25,5,1,0);
+//            encoderMecanumDrive(1.0,91,5,0,1);
+//            spit();
 
 
-            //coming back to get second block
-            dumbencoderMecanumDrive(1,190, 4, 0,1,false);
-            encoderMecanumDrive(1,50,10,1,0);
-
-            succ();
-            encoderMecanumDrive(0.4,20,10,1,1);
-
-            encoderMecanumDrive(1,130,8,-1,-1);
-            succstop();
-            robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(1,130,10,0,-1);
-            bruhbuddi();
-
-            //move to park
-            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
+        }else if(location.equals("Right")){
 
 
 
         }else{
-            //first block
-            //strafe and move forward for block setup
-            encoderMecanumDrive(0.75,8,1,-1,0);
-
-            encoderMecanumDrive(0.9,25,5,0,1);
-            gyroTurn(0.9,-52,2);
-            succ();
-            //move to collect block
-            encoderMecanumDrive(0.75,75,4,-1.0,0.95);
-
-            //fine tune grab block
-            encoderMecanumDrive(1,20,4,0.819152,-0.573576);
-
-            gyroTurn(0.9,0,2);
-            encoderMecanumDrive(1,45,10,0,-1);
-            gyroTurnAndMove(0.9,88,0.5,-90);
-            succstop();
-            robot.clamper.setPosition(0.15);
-            //move back to be able to move to foundation
-            encoderMecanumDrive(1,120,4,0,-1);
-
-            //move to foundation
-            bruh();
-            robot.clamper.setPosition(0.03);
-
-            //second block
-
-            //coming back to get second block
-            dumbencoderMecanumDrive(1,160, 4, 0,1,false);
-
-            //strafing sideways
-            encoderMecanumDrive(1,70,10,1,0);
-            succ();
-            encoderMecanumDrive(0.5,25,10,1,1);
-
-            encoderMecanumDrive(1,123,10,-1,-1);
-            succstop();
-            robot.clamper.setPosition(0.15);
-            encoderMecanumDrive(1,125,10,0,-1);
-            bruhbuddi();
+            //move to block
+            encoderMecanumDrive(0.9, 60,5,1,0);
 
 
-            //move to park
-            dumbencoderMecanumDrive(1,70, 4, 0,1,false);
+            rightClamp();
 
+            encoderMecanumDrive(0.5,25,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+
+            gyroTurn(0.5,0,1);
+            telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
+            telemetry.update();
+
+            encoderMecanumDrive(0.9,23,5,-1,0);
+
+            sleep(1000);
+            encoderMecanumDrive(1.0,201.5,10,0,-1);
+            encoderMecanumDrive(0.9,26,5,1,0);
+            yeetThaBlock();
+            gyroTurn(0.5,0,1);
+
+            encoderMecanumDrive(0.9,27,10,-1,0);
+            robot.turnoright.setPosition(0.48);
+            robot.extendoright.setPosition(0);
+            //Head back to pick up the second skystone
+            bencoderMecanumDrive(0.9,259,10,0);
+            encoderMecanumDrive(0.3,7,0.4,0,1);
+            rightClamp();
+
+            encoderMecanumDrive(0.5,28,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            encoderMecanumDrive(0.9,29,5,-1,0);
+
+            encoderMecanumDrive(1.0,292,10,0,-1);
+            encoderMecanumDrive(0.9,27,5,1,0);
+            yeetThaBlock();
+            encoderMecanumDrive(0.5,15,5,-1,0);
+            gyroTurn(0.7,90,2);
+
+            encoderMecanumDrive(0.9,19,5,0,-1);
+            robot.turnoright.setPosition(0.48);
+            robot.extendoright.setPosition(0);
+            sleep(1000);
+
+            grab();
+            encoderMecanumDrive(1,30,5,0,1);
+            gyroCurve(0.5,0,0,0.6);
+            gyroTurn(1.0,0,7);
+            release();
+            encoderMecanumDrive(1.0,15,5,0,-1);
+//            encoderMecanumDrive(1.0,25,5,1,0);
+//            encoderMecanumDrive(1.0,91,5,0,1);
+//            spit();
 
         }
 

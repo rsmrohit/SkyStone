@@ -45,7 +45,7 @@ public class RedDepotAuto extends BaseAutonomous {
             gyroTurn(0.5,0,2);
             robot.turnoright.setPosition(0.48);
             encoderMecanumDrive(0.9,31,10,-1,0);
-            bencoderMecanumDrive(0.9,225,10,0,-1);
+            bencoderMecanumDrive(0.9,225,10,180);
             encoderMecanumDrive(0.3,30,5,0,-1);
             rightClamp();
 
@@ -137,7 +137,7 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,25,10,-1,0);
             robot.turnoright.setPosition(0.48);
             //Head back to pick up the second skystone
-            bencoderMecanumDrive(0.9,233,10,0,-1);
+            bencoderMecanumDrive(0.9,233,10,180);
             rightClamp();
 
             encoderMecanumDrive(0.5,30,5,1,0);
