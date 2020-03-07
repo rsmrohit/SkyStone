@@ -89,6 +89,7 @@ public class SkyStoneTeleop extends OpMode{
     boolean unclamp;
 
     boolean startTheDrop;
+    boolean multiplier;
 
     int bin;
     int liftTarget;
@@ -156,6 +157,7 @@ public class SkyStoneTeleop extends OpMode{
         clamp = false;
         unclamp = false;
         startTheDrop = false;
+        multiplier = false;
 
         pastCap = false;
         bin = 0;
@@ -300,6 +302,27 @@ public class SkyStoneTeleop extends OpMode{
 
             robot.clamper.setPosition(0.03);
         }
+
+        if (gamepad2.a) {
+            robot.tape.setPower(0.5);
+        } else if (gamepad2.y) {
+            robot.tape.setPower(-0.5);
+        } else {
+            robot.tape.setPower(0);
+        }
+
+        if (gamepad2.left_trigger > 0.1) {
+            multiplier = true;
+        }
+
+        if (bPresses < 7) {
+            if (multiplier) {
+                bPresses = bPresses+4;
+            }
+        }
+
+
+
 
 
         if (gamepad2.b && !pastStateB) {

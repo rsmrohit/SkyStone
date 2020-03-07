@@ -101,29 +101,80 @@ public class RedDepotAuto extends BaseAutonomous {
 //            encoderMecanumDrive(0.9,215,10,0,1);
             encoderMecanumDriveDirection(0.9,222,8,0);
 
-            encoderMecanumDrive(0.9,31,5,1,0);
+            encoderMecanumDrive(0.9,26,5,1,0);
 //            dropThaBlock();
             yeetThaBlock();
             retractNoWait();
             gyroTurn(0.5,0,2);
 //            robot.turnoright.setPosition(0.48);
-            encoderMecanumDrive(0.9,28,10,-1,0);
+            encoderMecanumDrive(0.9,23,10,-1,0);
 //            robot.extendoright.setPosition(0);
 //            gyroTurnAndMove(0.9,180,0.8,180);
-            gyroTurn(0.8,180,2);
+            bencoderMecanumDrive(1.0,225,10,180);
+            encoderMecanumDrive(0.65,30,5,0,-1);
+            rightClamp();
+
+            encoderMecanumDrive(0.65,25,5,1,0);
+
+            bruhhh();
+            sleep(500);
+            liftClamp();
+            encoderMecanumDrive(0.9,38,5,-1,0);
+            encoderMecanumDrive(1.0,270,10,0,1);
+            encoderMecanumDrive(0.9,34,5,1,0);
+//            dropThaBlock();
+            yeetThaBlock();
+            encoderMecanumDrive(0.65,15,5,-1,0);
+            gyroTurn(0.7,90,2);
+            encoderMecanumDrive(0.9,15,5,1,0);
+            retractNoWait();
+            grabWithPower(0.6);
+            encoderMecanumDrive(0.9,20,5,0,-1);
+
+            grab(false);
+            encoderMecanumDrive(1,45,5,0,1);
+//            gyroCurve(0.3,180,0,0.5);
+            gyroCurve(1.0,180,0,0.6);
+            gyroTurn(1.0,180,7);
+            release();
+            encoderMecanumDrive(1.0,15,5,0,-1);
+//            encoderMecanumDrive(1.0,20,5,-1,0);
+//            encoderMecanumDrive(1.0,70,5,0,1);
             spit();
-            sleep(200);
-            succstop();
-//            gyroTurn(0.5,180,2);
-            encoderMecanumDriveDirection(1,202,5,180);
-            encoderMecanumDriveDirection(0.9,108,6,-130);
 
-            succ();
-            encoderMecanumDriveDirection(0.5,20,3,180);
+            encoderMecanumDriveDirection(1,130,5,-162);
+//            gyroTurn(0.8,180,2);
+//            spit();
+//            sleep(200);
+//            succstop();
+////            gyroTurn(0.5,180,2);
+//            encoderMecanumDriveDirection(1,230,5,180);
+//            encoderMecanumDriveDirection(0.8,50,5,-90);
+//            succ();
+//            encoderMecanumDriveDirection(0.5,16,3,180);
+////            encoderMecanumDriveDirection(0.9,108,6,-120);
+////            succ();
+////            encoderMecanumDriveDirection(0.5,10,3,180);
+//
+//            encoderMecanumDriveDirection(0.9,130,7,40);
+//            robot.clamper.setPosition(0.14);
+//            succstop();
+//            encoderMecanumDriveDirection(1,208,7,0);
+//            gyroTurn(0.8,90,2);
+//            grabWithPower(0.55);
+//            encoderMecanumDriveDirection(0.9,30,7,-90);
+//            grab(false);
+//            encoderMecanumDrive(1,45,5,0,1);
+////            gyroCurve(0.3,180,0,0.5);
+//            gyroCurve(1.0,180,0,0.6);
+//            gyroTurn(1.0,180,7);
+//            release();
+//            verticalEncoder(200);
+//            dumbencoderMecanumDrive(0.9,20,0,0,-1,true);
+//            robot.clamper.setPosition(0.03);
+//            dumbencoderMecanumDrive(0.9,30,0,-0.2,1,false);
 
-            encoderMecanumDriveDirection(0.9,130,7,25);
-            encoderMecanumDriveDirection(0.9,45,7,0);
-            gyroTurn(0.8,-90,2);
+
 
 
 

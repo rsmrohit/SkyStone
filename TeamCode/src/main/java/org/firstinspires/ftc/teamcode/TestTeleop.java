@@ -29,6 +29,14 @@ public class TestTeleop extends OpMode {
         }else if (gamepad1.x){
             robot.clamper.setPosition(0.13);
         }
+
+        if (gamepad2.left_stick_y != 0) {
+            robot.spinner.setPower(-gamepad2.left_stick_y*0.7);
+            robot.spinner2.setPower(-gamepad2.left_stick_y*0.7);
+        } else {
+            robot.spinner.setPower(0);
+            robot.spinner2.setPower(0);
+        }
         telemetry.addData("imu value", robot.imu.getAngularOrientation());
         telemetry.update();
     }
