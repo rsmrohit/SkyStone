@@ -29,52 +29,57 @@ public class RedDepotAuto extends BaseAutonomous {
         if (location.equals("Center")){
             //move to block
             encoderMecanumDrive(0.9, 60,5,1,0);
-            encoderMecanumDrive(0.4,18,1,0,-1);
+            encoderMecanumDrive(0.55,18,1,0,-1);
 
             rightClamp();
 
-            encoderMecanumDrive(0.5,25,5,1,0);
+            encoderMecanumDrive(0.65,25,5,1,0);
 
             bruhhh();
             sleep(500);
             liftClamp();
             encoderMecanumDrive(0.9,20,5,-1,0);
-            encoderMecanumDrive(0.9,195,10,0,1);
+            encoderMecanumDrive(1.0,195,10,0,1);
             encoderMecanumDrive(0.9,31,5,1,0);
-            dropThaBlock();
+//            dropThaBlock();
+            yeetThaBlock();
             gyroTurn(0.5,0,2);
-            robot.turnoright.setPosition(0.48);
+            retractNoWait();
             encoderMecanumDrive(0.9,31,10,-1,0);
-            bencoderMecanumDrive(0.9,225,10,180);
-            encoderMecanumDrive(0.3,30,5,0,-1);
+            bencoderMecanumDrive(1.0,225,10,180);
+            encoderMecanumDrive(0.65,30,5,0,-1);
             rightClamp();
 
-            encoderMecanumDrive(0.5,30,5,1,0);
+            encoderMecanumDrive(0.65,25,5,1,0);
 
             bruhhh();
             sleep(500);
             liftClamp();
             encoderMecanumDrive(0.9,28,5,-1,0);
-            encoderMecanumDrive(0.9,270,10,0,1);
+            encoderMecanumDrive(1.0,270,10,0,1);
             encoderMecanumDrive(0.9,34,5,1,0);
-            dropThaBlock();
-            encoderMecanumDrive(0.5,15,5,-1,0);
+//            dropThaBlock();
+            yeetThaBlock();
+            encoderMecanumDrive(0.65,15,5,-1,0);
             gyroTurn(0.7,90,2);
             encoderMecanumDrive(0.9,15,5,1,0);
-            encoderMecanumDrive(0.9,30,5,0,-1);
-            robot.turnoright.setPosition(0.48);
-            robot.extendoright.setPosition(0);
+            retractNoWait();
+            grabWithPower(0.6);
+            encoderMecanumDrive(0.9,20,5,0,-1);
 
-
-            grab(true);
-            gyroCurve(0.3,180,0,0.5);
+            grab(false);
+            encoderMecanumDrive(1,45,5,0,1);
+//            gyroCurve(0.3,180,0,0.5);
+            gyroCurve(1.0,180,0,0.6);
             gyroTurn(1.0,180,7);
             release();
             encoderMecanumDrive(1.0,15,5,0,-1);
-            encoderMecanumDrive(1.0,20,5,-1,0);
-            encoderMecanumDrive(0.9,70,5,0,1);
-
+//            encoderMecanumDrive(1.0,20,5,-1,0);
+//            encoderMecanumDrive(1.0,70,5,0,1);
             spit();
+
+            encoderMecanumDriveDirection(1,130,5,-162);
+
 
 
         } else if (location.equals("Right")){
@@ -95,7 +100,8 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,25,5,-1,0);
             encoderMecanumDrive(0.9,215,10,0,1);
             encoderMecanumDrive(0.9,31,5,1,0);
-            dropThaBlock();
+//            dropThaBlock();
+            yeetThaBlock();
             gyroTurn(0.5,0,2);
             robot.turnoright.setPosition(0.48);
             encoderMecanumDrive(0.9,31,10,-1,0);
@@ -131,7 +137,8 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,20,5,-1,0);
             encoderMecanumDrive(0.9,172.5,10,0,1);
             encoderMecanumDrive(0.9,25,5,1,0);
-            dropThaBlock();
+//            dropThaBlock();
+            yeetThaBlock();
             gyroTurn(0.5,0,2);
 
             encoderMecanumDrive(0.9,25,10,-1,0);
@@ -148,13 +155,14 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,28,5,-1,0);
             encoderMecanumDrive(0.9,248,10,0,1);
             encoderMecanumDrive(0.9,34,5,1,0);
-            dropThaBlock();
+//            dropThaBlock();
+            yeetThaBlock();
             encoderMecanumDrive(0.5,15,5,-1,0);
             gyroTurn(0.7,90,2);
             encoderMecanumDrive(0.9,15,5,1,0);
             encoderMecanumDrive(0.9,30,5,0,-1);
             grabAndRetract();
-            gyroCurve(0.3,180,0,0.5);
+            gyroCurve(1.0,180,0,0.6);
             gyroTurn(1.0,180,7);
             release();
             encoderMecanumDrive(1.0,15,5,0,-1);

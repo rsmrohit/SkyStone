@@ -82,9 +82,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             release();
             encoderMecanumDriveDirection(1.0,15,5,180);
             encoderMecanumDriveDirection(1.0,120,5,-16);
-//            encoderMecanumDrive(1.0,25,5,1,0);
-//            encoderMecanumDrive(1.0,91,5,0,1);
-//            spit();
+            spit();
 
 
         }else if(location.equals("Right")){
@@ -143,6 +141,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             release();
             encoderMecanumDriveDirection(1.0,15,5,180);
             encoderMecanumDriveDirection(1.0,120,5,-16);
+            spit();
 
 
 
@@ -205,6 +204,7 @@ public class BlueDepotAuto extends BaseAutonomous {
             release();
             encoderMecanumDriveDirection(1.0,15,5,180);
             encoderMecanumDriveDirection(1.0,120,5,-16);
+            spit();
 
 //            encoderMecanumDrive(0.5,25,5,1,0);
 //
