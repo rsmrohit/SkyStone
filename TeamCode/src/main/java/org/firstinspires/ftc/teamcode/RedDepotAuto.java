@@ -99,7 +99,7 @@ public class RedDepotAuto extends BaseAutonomous {
 
             encoderMecanumDrive(0.9,25,5,-1,0);
 //            encoderMecanumDrive(0.9,215,10,0,1);
-            encoderMecanumDriveDirection(0.9,215,8,0);
+            encoderMecanumDriveDirection(0.9,222,8,0);
 
             encoderMecanumDrive(0.9,31,5,1,0);
 //            dropThaBlock();
@@ -110,15 +110,21 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,28,10,-1,0);
 //            robot.extendoright.setPosition(0);
 //            gyroTurnAndMove(0.9,180,0.8,180);
+            gyroTurn(0.8,180,2);
             spit();
             sleep(200);
             succstop();
 //            gyroTurn(0.5,180,2);
-            encoderMecanumDriveDirection(0.9,72,5,180);
+            encoderMecanumDriveDirection(1,202,5,180);
             encoderMecanumDriveDirection(0.9,108,6,-130);
 
             succ();
-            encoderMecanumDriveDirection(0.5,30,3,180);
+            encoderMecanumDriveDirection(0.5,20,3,180);
+
+            encoderMecanumDriveDirection(0.9,130,7,25);
+            encoderMecanumDriveDirection(0.9,45,7,0);
+            gyroTurn(0.8,-90,2);
+
 
 
 
