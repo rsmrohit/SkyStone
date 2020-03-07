@@ -711,13 +711,19 @@ public abstract class BaseAutonomous extends LinearOpMode {
         robot.spinner.setPower(-1);
         robot.spinner2.setPower(-1);
 
-
     }
 
-    public void grab(){
+    public void grab(boolean sleep){
         robot.rightclaw.setPower(1);
         robot.leftclaw.setPower(1);
-        sleep(800);
+        if (sleep) {
+            sleep(800);
+        } else {}
+    }
+
+    public void grabWithPower(double power) {
+        robot.rightclaw.setPower(power);
+        robot.leftclaw.setPower(power);
     }
 
 
@@ -730,8 +736,25 @@ public abstract class BaseAutonomous extends LinearOpMode {
 
     }
 
+    public void retract(){
+        robot.turnoright.setPosition(0.48);
+        robot.extendoright.setPosition(0);
+        sleep(700);
+    }
+
+    public void retractNoWait(){
+        robot.turnoright.setPosition(0.48);
+        robot.extendoright.setPosition(0);
+    }
+
+    public void grabAndRetract() {
+        retract();
+        grab(true);
+    }
+
     public void rightClamp(){
         robot.extendoright.setPosition(0.45);
+        robot.turnoright.setPosition(0);
     }
 
     public void bruhhh(){

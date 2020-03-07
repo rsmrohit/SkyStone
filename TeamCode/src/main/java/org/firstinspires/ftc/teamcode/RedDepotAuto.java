@@ -66,7 +66,7 @@ public class RedDepotAuto extends BaseAutonomous {
             robot.extendoright.setPosition(0);
 
 
-            grab();
+            grab(true);
             gyroCurve(0.3,180,0,0.5);
             gyroTurn(1.0,180,7);
             release();
@@ -153,11 +153,7 @@ public class RedDepotAuto extends BaseAutonomous {
             gyroTurn(0.7,90,2);
             encoderMecanumDrive(0.9,15,5,1,0);
             encoderMecanumDrive(0.9,30,5,0,-1);
-            robot.turnoright.setPosition(0.48);
-            robot.extendoright.setPosition(0);
-
-
-            grab();
+            grabAndRetract();
             gyroCurve(0.3,180,0,0.5);
             gyroTurn(1.0,180,7);
             release();

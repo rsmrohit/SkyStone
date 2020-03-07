@@ -17,7 +17,7 @@ public class redBuildingSiteAuto extends BaseAutonomous {
         encoderMecanumDrive(DRIVE_SPEED,65,2,0,-1);
         encoderMecanumDrive(DRIVE_SPEED,30,2,-1,0);
         encoderMecanumDrive(0.5,22.5,2,0,-1);
-        grab();
+        grab(true);
         sleep(300);
 
         encoderMecanumDrive(1.0,50,5,0,1);
