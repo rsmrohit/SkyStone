@@ -127,7 +127,7 @@ public class HardwareSkyStone  {
             leftclaw.setDirection(CRServo.Direction.FORWARD);
             leftclaw.setPower(0);
             clamper.setPosition(0.03);
-            capstone.setPosition(0.2);
+            capstone.setPosition(0.0);
 
             extendoright.setPosition(0.05);
 //            extendoleft.setPosition(0);

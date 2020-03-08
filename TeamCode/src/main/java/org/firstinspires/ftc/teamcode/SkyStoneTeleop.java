@@ -117,7 +117,7 @@ public class SkyStoneTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareSkyStone robot       = new HardwareSkyStone(false); // use the class created to define a RoverRuckus's hardware
     final double COUNTS_PER_INCH = 307.699557;
-
+    boolean forward = true;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -232,10 +232,10 @@ public class SkyStoneTeleop extends OpMode{
 
 
         if (gamepad2.x && !pastCap) {
-            if (robot.capstone.getPosition() == 0.2) {
-                robot.capstone.setPosition(0.53);
-            } else {
+            if (robot.capstone.getPosition() == 0) {
                 robot.capstone.setPosition(0.2);
+            } else {
+                robot.capstone.setPosition(0.65);
             }
         }
         pastCap = gamepad2.x;
@@ -304,30 +304,28 @@ public class SkyStoneTeleop extends OpMode{
         }
 
         if (gamepad2.a) {
-            robot.tape.setPower(0.5);
+            robot.tape.setPower(0.75);
         } else if (gamepad2.y) {
-            robot.tape.setPower(-0.5);
+            robot.tape.setPower(-0.75);
         } else {
             robot.tape.setPower(0);
         }
-
+        // left trigger jumps 4 levels for b press
         if (gamepad2.left_trigger > 0.1) {
             multiplier = true;
         }
+        else
+            multiplier = false;
 
-        if (bPresses < 7) {
-            if (multiplier) {
-                bPresses = bPresses+4;
-            }
+        if (bPresses < 7 && multiplier) {
+            bPresses = bPresses+4;
         }
-
-
-
-
-
-        if (gamepad2.b && !pastStateB) {
-            bPresses++;
-            runtime.reset();
+        // else no multiplier - every b press increases level by 1
+       else {
+            if (gamepad2.b && !pastStateB) {
+                bPresses++;
+                runtime.reset();
+            }
         }
         pastStateB = gamepad2.b;
 
@@ -377,27 +375,19 @@ public class SkyStoneTeleop extends OpMode{
         }
 
         if (!horilifting) {
+            if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
 
             if (-gamepad2.right_stick_y > 0) {
 
+                robot.horizontalSlider.setPower(gamepad2.right_stick_y);
 
-                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
-                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
+            } else if (-gamepad2.right_stick_y < 0 /*&& robot.horizontalSlider.getCurrentPosition() > -150*/) {
 
-                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
-
-            } else if (-gamepad2.right_stick_y < 0 && robot.horizontalSlider.getCurrentPosition() > -150) {
-
-                robot.horizontalSlider.setTargetPosition(-150);
-                robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.horizontalSlider.setPower(-gamepad2.right_stick_y);
-
+                robot.horizontalSlider.setPower(gamepad2.right_stick_y);
             } else {
 
-                if (robot.horizontalSlider.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
-                    robot.horizontalSlider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                }
                 robot.horizontalSlider.setPower(0);
             }
         }
@@ -439,6 +429,9 @@ public class SkyStoneTeleop extends OpMode{
 //        telemetry.addData("horizontal", delta[2]);
 
         telemetry.addData("imu value",robot.imu.getAngularOrientation().firstAngle);
+        telemetry.addData("multiplier",multiplier);
+        telemetry.addData("bPresses",bPresses);
+        telemetry.addData("horizSlider", robot.horizontalSlider.getCurrentPosition());
         telemetry.update();
 
         }
@@ -466,6 +459,15 @@ public class SkyStoneTeleop extends OpMode{
                 startLift(1.0,1480,robot.verticalSlider);
                 break;
             case 4:
+                startLift(1.0,2000,robot.verticalSlider);
+                break;
+            case 5:
+                startLift(1.0,2000,robot.verticalSlider);
+                break;
+            case 6:
+                startLift(1.0,2000,robot.verticalSlider);
+                break;
+            case 7:
                 startLift(1.0,2000,robot.verticalSlider);
                 break;
         }

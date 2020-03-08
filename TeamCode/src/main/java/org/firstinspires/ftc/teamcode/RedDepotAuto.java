@@ -209,10 +209,11 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,25,5,1,0);
 //            dropThaBlock();
             yeetThaBlock();
+            retractNoWait();
             gyroTurn(0.5,0,2);
 
             encoderMecanumDrive(0.9,25,10,-1,0);
-            robot.turnoright.setPosition(0.48);
+
             //Head back to pick up the second skystone
             bencoderMecanumDrive(0.9,233,10,180);
             rightClamp();
@@ -227,18 +228,25 @@ public class RedDepotAuto extends BaseAutonomous {
             encoderMecanumDrive(0.9,34,5,1,0);
 //            dropThaBlock();
             yeetThaBlock();
-            encoderMecanumDrive(0.5,15,5,-1,0);
+            encoderMecanumDrive(0.65,15,5,-1,0);
             gyroTurn(0.7,90,2);
-            encoderMecanumDrive(0.9,15,5,1,0);
-            encoderMecanumDrive(0.9,30,5,0,-1);
-            grabAndRetract();
+            encoderMecanumDrive(0.9,22,5,1,0);
+            retractNoWait();
+            grabWithPower(0.65);
+            encoderMecanumDrive(0.9,24,5,0,-1);
+            sleep(100);
+            grab(false);
+            encoderMecanumDrive(1,49,5,0,1);
+//            gyroCurve(0.3,180,0,0.5);
             gyroCurve(1.0,180,0,0.6);
             gyroTurn(1.0,180,7);
             release();
             encoderMecanumDrive(1.0,15,5,0,-1);
-            encoderMecanumDrive(1.0,20,5,-1,0);
-            encoderMecanumDrive(0.9,65,5,0,1);
+//            encoderMecanumDrive(1.0,20,5,-1,0);
+//            encoderMecanumDrive(1.0,70,5,0,1);
             spit();
+
+            encoderMecanumDriveDirection(1,130,5,-162);
 
         }
 
