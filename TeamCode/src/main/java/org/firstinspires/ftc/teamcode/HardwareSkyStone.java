@@ -25,7 +25,7 @@ import java.util.List;
 public class HardwareSkyStone  {
 
     enum motornames{
-        front_Left, front_Right, back_Left, back_Right, succ_1, succ_2;
+        frontLeft, frontRight, backLeft, backRight, spinner, spinner2;
     }
 
     /* Public OpMode members. */
@@ -40,17 +40,17 @@ public class HardwareSkyStone  {
 
     public DcMotor getMotor(motornames motor){
        switch (motor){
-           case front_Left:
+           case frontLeft:
                return frontLeft;
-           case back_Left:
+           case backLeft:
                return backLeft;
-           case back_Right:
+           case backRight:
                return backRight;
-           case front_Right:
+           case frontRight:
                return frontRight;
-           case succ_1:
+           case spinner:
                return spinner;
-           case succ_2:
+           case spinner2:
                return spinner2;
        }
         return frontRight;
@@ -116,7 +116,7 @@ public class HardwareSkyStone  {
 //        spinner.setDirection(DcMotor.Direction.REVERSE);
 //        spinner2.setDirection(DcMotor.Direction.FORWARD);
         for (motornames motors : motornames.values()){
-            if (motors.equals(motornames.front_Left)|| motors.equals(motornames.succ_2)|| motors.equals(motornames.back_Left)) {
+            if (motors.equals(motornames.frontLeft)|| motors.equals(motornames.spinner)|| motors.equals(motornames.backLeft)) {
                 getMotor(motors).setDirection(DcMotor.Direction.REVERSE);
             } else {
                 getMotor(motors).setDirection(DcMotor.Direction.FORWARD);
@@ -159,7 +159,7 @@ public class HardwareSkyStone  {
 
             // Reset encoder
             for (motornames motors : motornames.values()){
-                if (motors.equals(motornames.succ_1)|| motors.equals(motornames.succ_2)) {
+                if (motors.equals(motornames.spinner)|| motors.equals(motornames.spinner2)) {
                     getMotor(motors).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 } else {
                     getMotor(motors).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -174,7 +174,7 @@ public class HardwareSkyStone  {
 
             // set to run using encoder
             for (motornames motors : motornames.values()){
-                if (motors.equals(motornames.succ_1)|| motors.equals(motornames.succ_2)) {
+                if (motors.equals(motornames.spinner)|| motors.equals(motornames.spinner2)) {
                 } else {
                     getMotor(motors).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }
@@ -188,7 +188,7 @@ public class HardwareSkyStone  {
 
 
             }
-            
+
         }
     }
 }
