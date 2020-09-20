@@ -24,18 +24,30 @@ import java.util.List;
 
 public class HardwareSkyStone  {
 
-    enum motornames{
-        frontLeft, frontRight, backLeft, backRight, spinner, spinner2;
-    }
-
-    /* Public OpMode members. */
-    public DcMotor frontLeft = null;
-    public DcMotor frontRight = null;
-    public DcMotor backLeft = null;
-    public DcMotor backRight = null;
+    public DcMotor frontLeft, frontRight, backLeft, backRight, left, right, middle;
 
     public DcMotor  spinner = null;
     public DcMotor spinner2 = null;
+
+    enum motornames{
+        frontLeft, frontRight, backLeft, backRight, spinner, spinner2;
+    }
+    enum odowheelnames{
+        left, middle, right
+    }
+
+    /* Public OpMode members. */
+    public DcMotor getOdoMotor(odowheelnames wheel){
+        switch (wheel){
+            case left:
+                return left;
+            case right:
+                return right;
+            case middle:
+                return middle;
+        }
+        return left;
+    }
 
 
     public DcMotor getMotor(motornames motor){
@@ -96,13 +108,15 @@ public class HardwareSkyStone  {
         leftclaw = hwMap.get(CRServo.class, "left_claw");
         rightclaw = hwMap.get(CRServo.class, "right_claw");
 
+        left = hwMap.dcMotor.get("leftVertical");
+        right = hwMap.dcMotor.get("rightVertical");
+        middle = hwMap.dcMotor.get("middleHorizontal");
+
 
         if (!test) {
             //Define and Initialize Sensors
             realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
             realgyro.calibrate();
-
-
 //            realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
 //            realgyro2.calibrate();
 
@@ -123,16 +137,22 @@ public class HardwareSkyStone  {
             }
         }
         rightclaw.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        if (!test) {
-
-
-        }
+//
+//        if (!test) {
+//
+//
+//        }
 
 
         // Set all motors to zero power
         for (motornames motors : motornames.values()){
+            getMotor(motors).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            getMotor(motors).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             getMotor(motors).setPower(0);
+        }
+        for (odowheelnames motors : odowheelnames.values()){
+            getOdoMotor(motors).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            getOdoMotor(motors).setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         leftclaw.setPower(0);
